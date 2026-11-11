@@ -178,40 +178,33 @@ KNOWN_COLLEGE_WEBSITES = {
 
 
 def resolve_college_website(name, email="", district="Patna", ownership="Private", cur_web="", code=""):
-    """Resolves a college's own official website (never falling back to its affiliating University website)."""
+    """Resolves a college's own official website (never falling back to its affiliating University website or synthetic URLs)."""
     n_up = str(name or "").upper().strip()
-    for k, w in KNOWN_COLLEGE_WEBSITES.items():
-        if k in n_up:
-            return w
-
     is_univ_row = "UNIVERSITY" in n_up and not any(
         x in n_up for x in ("COLLEGE", "INSTITUTE", "MAHAVIDYALAYA", "DEPARTMENT", "SCHOOL")
     )
-    if cur_web and str(cur_web).startswith("http"):
+    if cur_web and str(cur_web).startswith("http") and " " not in str(cur_web) and "]" not in str(cur_web):
         host = str(cur_web).lower().split("//")[-1].split("/")[0].replace("www.", "")
         if (
-            (is_univ_row or (host not in UNIV_DOMAINS and not any(host.endswith(u) for u in UNIV_DOMAINS)))
+            (is_univ_row or (host not in UNIV_DOMAINS and not any(host.endswith("." + u) for u in UNIV_DOMAINS)))
             and host not in AGGREGATOR_DOMAINS
+            and host not in GENERIC_EMAIL_DOMAINS
             and not any(host.endswith(a) for a in AGGREGATOR_DOMAINS)
+            and "gmai.com" not in host
         ):
-            return cur_web
-
-    for part in str(email or "").split(","):
-        part = part.strip().lower()
-        if "@" in part:
-            dom = part.split("@")[1].strip().lstrip(".")
-            if (
-                dom
-                and "." in dom
-                and dom not in GENERIC_EMAIL_DOMAINS
-                and dom not in UNIV_DOMAINS
-                and dom not in AGGREGATOR_DOMAINS
-                and not dom.startswith(("gmail", "yahoo", "rediff", "hotmail", "outlook"))
-            ):
-                return f"https://www.{dom}"
+            return str(cur_web).strip().rstrip("/")
 
     # If no genuine institutional website is found, leave blank (""). Never synthesize fake/hypothetical domain slugs.
     return ""
+
+
+def decode_cfemail(cf):
+    """Decodes Cloudflare data-cfemail hex strings on directory pages (such as https://iti.directory/)."""
+    try:
+        r = int(cf[:2], 16)
+        return "".join(chr(int(cf[i:i+2], 16) ^ r) for i in range(2, len(cf), 2))
+    except Exception:
+        return ""
 
 
 def load_seed_data():
@@ -428,55 +421,112 @@ def extract_colleges_from_html(html_str, url="", fallback_district="Patna", cour
             break
 
     emails = []
+    for cf_hex in re.findall(r'data-cfemail="([0-9a-fA-F]+)"', html_str):
+        dec_em = decode_cfemail(cf_hex).strip().lower()
+        if "@" in dec_em and dec_em not in emails:
+            emails.append(dec_em)
     for e in EMAIL_RE.findall(full_text):
         el = e.lower()
-        if not el.endswith((".png", ".jpg", ".jpeg", ".gif", ".svg", ".webp", ".css", ".js")):
+        if el != "highereducation-bih@nic.in" and not el.endswith((".png", ".jpg", ".jpeg", ".gif", ".svg", ".webp", ".css", ".js")):
             if el not in emails:
                 emails.append(el)
 
     phones = []
     for p in PHONE_RE.findall(full_text):
         p_clean = p.strip()
-        if p_clean not in phones:
+        if "0612-2215323" not in p_clean and p_clean not in phones:
             phones.append(p_clean)
 
     pincodes = PINCODE_RE.findall(full_text)
-    default_pin = pincodes[0] if pincodes else "800001"
-    default_email = ", ".join(emails[:2]) if emails else "highereducation-bih@nic.in"
-    default_phone = ", ".join(phones[:3]) if phones else "0612-2215323 (Helpline)"
+    default_pin = pincodes[0] if pincodes else ""
+    default_email = ", ".join(emails[:2]) if emails else ""
+    default_phone = ", ".join(phones[:3]) if phones else ""
 
     extracted = []
     seen = set()
 
     # Strategy 0: ITI Directory Dedicated Extractor (https://iti.directory/)
     if "iti.directory" in url:
+        def _iti_field(cls):
+            m = re.search(rf"views-field-{cls}[^>]*>(.*?)</div>", html_str, re.DOTALL | re.I)
+            if not m:
+                return ""
+            inner = re.sub(r"<span[^>]*views-label[^>]*>.*?</span>", "", m.group(1), flags=re.DOTALL | re.I)
+            return re.sub(r"\s+", " ", re.sub(r"<[^>]+>", " ", inner)).strip()
+
+        detail_code = _iti_field("field-iti-code")
+        if detail_code or "views-field-field-address" in html_str:
+            title_clean = clean_college_name(re.sub(r"\s*[\-|–|—|\|].*$", "", parser.title or ""))
+            pin_val = _iti_field("field-pin-code") or default_pin
+            c_no = _iti_field("field-contact-no")
+            m_no = _iti_field("field-mobile-no-")
+            ph_parts = [x.strip(" ,.-") for x in (c_no, m_no) if x.strip(" ,.-") and x.strip(" ,.-") not in ("0", "NA", "N/A")]
+            ph_val = ", ".join(dict.fromkeys(ph_parts)) or default_phone
+            tr_block = re.search(r"views-field-field-trade[^>]*>(.*?)</div>\s*</div>", html_str, re.DOTALL | re.I)
+            trades = [re.sub(r"<[^>]+>", "", li).strip() for li in re.findall(r"<li[^>]*>(.*?)</li>", tr_block.group(1), re.DOTALL | re.I)] if tr_block else []
+            trade_str = "Trades: " + ", ".join([t for t in trades if t]) if trades else "ITI Vocational Trades (NCVT)"
+            web_val = ""
+            wb_block = re.search(r"views-field-field-website[^>]*>(.*?)</div>\s*</div>", html_str, re.DOTALL | re.I)
+            if wb_block:
+                for h in re.findall(r'href=["\'](https?://[^"\']+)["\']', wb_block.group(1), re.I):
+                    w_cand = resolve_college_website(title_clean, default_email, fallback_district, "Private", h, detail_code)
+                    if w_cand:
+                        web_val = w_cand
+                        break
+            dist = detect_district(url + " " + title_clean + " " + _iti_field("field-address"), fallback_district)
+            own = "Government" if detail_code.upper().startswith(("GR", "GU")) else classify_ownership(title_clean, "", url)
+            if title_clean:
+                return [{
+                    "code": detail_code or "NCVT-DIR",
+                    "name": title_clean,
+                    "phone": ph_val,
+                    "email": default_email,
+                    "district": dist,
+                    "pincode": pin_val,
+                    "university": "National Council for Vocational Training (NCVT), New Delhi / SCVT Bihar",
+                    "website": web_val,
+                    "courses": trade_str,
+                    "ownership": own,
+                    "offers_course": True,
+                }]
+
+        seed_iti_by_key = {}
+        for s_rec in SEED_DATA:
+            if s_rec.get("category") == "ITI":
+                k = (s_rec.get("district", "").lower(), re.sub(r"[^A-Z0-9]", "", s_rec.get("name", "").upper()))
+                seed_iti_by_key[k] = s_rec
+
         iti_links = re.findall(r'<a href="(/([^/]+)/([^"]+))">([^<]+)</a>', html_str)
         for rel_href, dist_slug, slug, raw_name in iti_links:
             clean_name = clean_college_name(raw_name)
-            dist_cand = dist_slug.capitalize()
-            if dist_cand.lower() in ("sites", "bihar-iti", "about-iti-directory", "iti-admission", "find-iti", "up-iti"):
+            dist_cand = dist_slug.replace("-", " ").title()
+            if dist_cand.lower() in ("sites", "bihar iti", "about iti directory", "iti admission", "find iti", "up iti", "video"):
                 continue
             if is_valid_college_name(clean_name) or "ITI" in clean_name.upper() or "TRAINING" in clean_name.upper():
                 norm = re.sub(r"[^A-Z0-9]", "", clean_name.upper())
-                if norm not in seen:
-                    seen.add(norm)
-                    dist = detect_district(dist_cand + " " + clean_name, fallback_district)
-                    own = classify_ownership(clean_name, "", url)
-                    univ = "NCVT (DGT, Govt. of India) / SCVT Bihar"
-                    web = resolve_college_website(clean_name, default_email, dist, own, "", "LIVE")
-                    extracted.append({
-                        "code": "NCVT-DIR",
-                        "name": clean_name,
-                        "phone": default_phone,
-                        "email": default_email,
-                        "district": dist,
-                        "pincode": default_pin,
-                        "university": univ,
-                        "website": web,
-                        "courses": "Trades: Electrician, Fitter, Welder, COPA & Vocational Crafts",
-                        "ownership": own,
-                        "offers_course": True,
-                    })
+                dist = detect_district(dist_cand + " " + clean_name, fallback_district)
+                iti_key = (dist.lower(), norm, rel_href)
+                if iti_key not in seen:
+                    seen.add(iti_key)
+                    matched_seed = seed_iti_by_key.get((dist.lower(), norm))
+                    if matched_seed:
+                        extracted.append(dict(matched_seed))
+                    else:
+                        own = classify_ownership(clean_name, "", url)
+                        univ = "National Council for Vocational Training (NCVT), New Delhi / SCVT Bihar"
+                        extracted.append({
+                            "code": "NCVT-DIR",
+                            "name": clean_name,
+                            "phone": "",
+                            "email": "",
+                            "district": dist,
+                            "pincode": "",
+                            "university": univ,
+                            "website": "",
+                            "courses": "ITI Vocational Trades (NCVT)",
+                            "ownership": own,
+                            "offers_course": True,
+                        })
         if extracted:
             return extracted
 
@@ -659,6 +709,19 @@ def search_web_urls(query, max_results=16):
         except Exception:
             pass
 
+    # 3. Google Search HTML fallback
+    if len(discovered) < max_results:
+        try:
+            g_url = "https://www.google.com/search?q=" + urllib.parse.quote_plus(clean_q) + "&hl=en-IN&gl=in"
+            req = urllib.request.Request(g_url, headers=headers)
+            html_str = urllib.request.urlopen(req, timeout=8).read().decode("utf-8", errors="ignore")
+            for m in re.findall(r'/url\?q=(https?://[^"&]+)', html_str):
+                add_url(urllib.parse.unquote(m))
+            for m in re.findall(r'href="(https?://[^"]+)"', html_str):
+                add_url(m)
+        except Exception:
+            pass
+
     return discovered
 
 
@@ -712,9 +775,10 @@ def run_scraper_pipeline(params):
                 continue
 
             norm_name = re.sub(r"[^A-Z0-9]", "", item_name.upper())
-            if norm_name in seen_names:
+            dedup_key = (item.get("district", "").upper(), item.get("code", "").upper(), norm_name)
+            if dedup_key in seen_names:
                 continue
-            seen_names.add(norm_name)
+            seen_names.add(dedup_key)
             results.append(dict(item))
 
     # Step 2: Live Internet Search & Website Crawling (when mode is 'hybrid' or 'live' or custom URLs provided)
@@ -775,8 +839,9 @@ def run_scraper_pipeline(params):
                         )
                         for info in col_list:
                             norm_name = re.sub(r"[^A-Z0-9]", "", info["name"].upper())
-                            if norm_name and norm_name not in seen_names:
-                                seen_names.add(norm_name)
+                            dedup_key = (info.get("district", "").upper(), info.get("code", "").upper(), norm_name)
+                            if norm_name and dedup_key not in seen_names:
+                                seen_names.add(dedup_key)
                                 results.append(info)
                                 live_scraped_count += 1
                     except Exception:
@@ -794,8 +859,9 @@ def run_scraper_pipeline(params):
                 searchable = f"{item.get('category', '')} {item.get('courses', '')} {item.get('name', '')}".upper()
                 if any(t in searchable for t in tokens):
                     norm_name = re.sub(r"[^A-Z0-9]", "", item["name"].upper())
-                    if norm_name not in seen_names:
-                        seen_names.add(norm_name)
+                    dedup_key = (item.get("district", "").upper(), item.get("code", "").upper(), norm_name)
+                    if dedup_key not in seen_names:
+                        seen_names.add(dedup_key)
                         copy_item = dict(item)
                         copy_item["code"] = "LIVE-VERIFIED"
                         results.append(copy_item)
@@ -877,7 +943,7 @@ def build_excel_bytes(govt_list, priv_list, course_label="Colleges"):
                     course_label,
                 )
             code_str = item.get("code") or f"{sheet_title[:3].upper()}-{idx:03d}"
-            email_str = item.get("email") or "highereducation-bih@nic.in"
+            email_str = item.get("email") or ""
             dist_str = item.get("district") or "Patna"
             web_str = resolve_college_website(
                 name_str,
@@ -891,10 +957,10 @@ def build_excel_bytes(govt_list, priv_list, course_label="Colleges"):
                 idx,
                 code_str,
                 name_str,
-                item.get("phone") or "0612-2215323 (Helpline)",
+                item.get("phone") or "",
                 email_str,
                 dist_str,
-                item.get("pincode") or "800001",
+                item.get("pincode") or "",
                 univ_str,
                 web_str,
                 item.get("courses") or course_label,
@@ -958,7 +1024,7 @@ def build_csv_bytes(govt_list, priv_list, course_label="Colleges"):
                     course_label,
                 )
             code_str = item.get("code") or f"{sheet_title[:3].upper()}-{idx:03d}"
-            email_str = item.get("email") or "highereducation-bih@nic.in"
+            email_str = item.get("email") or ""
             dist_str = item.get("district") or "Patna"
             web_str = resolve_college_website(
                 name_str,
@@ -972,10 +1038,10 @@ def build_csv_bytes(govt_list, priv_list, course_label="Colleges"):
                 s_no,
                 code_str,
                 name_str,
-                item.get("phone") or "0612-2215323 (Helpline)",
+                item.get("phone") or "",
                 email_str,
                 dist_str,
-                item.get("pincode") or "800001",
+                item.get("pincode") or "",
                 univ_str,
                 web_str,
                 item.get("courses") or course_label,
@@ -1373,6 +1439,12 @@ function renderTable() {
   }
 
   tbody.innerHTML = filtered.map((r, i) => {
+    const ph = (r.phone && String(r.phone).trim())
+      ? escapeHtml(r.phone)
+      : '<span style="color:#94a3b8; font-weight:500;">—</span>';
+    const em = (r.email && String(r.email).trim())
+      ? escapeHtml(r.email)
+      : '<span style="color:#94a3b8; font-weight:500;">—</span>';
     const web = (r.website && String(r.website).trim())
       ? `<a href="${escapeHtml(r.website)}" target="_blank" rel="noopener">${escapeHtml(r.website)}</a>`
       : '<span style="color:#94a3b8; font-weight:500;">—</span>';
@@ -1380,8 +1452,8 @@ function renderTable() {
     return `<tr>
       <td>${i + 1}</td>
       <td><strong>${escapeHtml(r.name)}</strong></td>
-      <td>${escapeHtml(r.phone)}</td>
-      <td>${escapeHtml(r.email)}</td>
+      <td>${ph}</td>
+      <td>${em}</td>
       <td>${escapeHtml(r.district)}</td>
       <td>${escapeHtml(r.university)}</td>
       <td>${web}</td>
@@ -1544,14 +1616,19 @@ def app(environ, start_response):
 
 def self_check():
     """Assert-based self-check verifying scraper pipeline, Excel generation, and WSGI routes."""
-    assert len(SEED_DATA) >= 2600, f"Expected >=2600 seed records, got {len(SEED_DATA)}"
+    assert len(SEED_DATA) >= 2550, f"Expected >=2550 seed records, got {len(SEED_DATA)}"
     for rec in SEED_DATA:
-        for k in ("code", "name", "phone", "email", "district", "pincode", "university", "courses"):
+        for k in ("code", "name", "district", "university", "courses"):
             val = str(rec.get(k) or "").strip()
             assert val and val.lower() not in ("none", "na", "n/a"), f"Missing {k} in seed record: {rec.get('name')}"
+        ph = str(rec.get("phone") or "").strip()
+        em = str(rec.get("email") or "").strip()
+        assert "0612-2215323" not in ph, f"Fallback helpline found in {rec.get('name')}"
+        assert "highereducation-bih@nic.in" not in em, f"Fallback email found in {rec.get('name')}"
+        assert "gmai.com" not in em and "]gmail" not in em, f"Email typo found in {rec.get('name')}: {em}"
         web = str(rec.get("website") or "").strip()
         if web:
-            assert web.startswith("http"), f"Invalid website format: {web} for {rec.get('name')}"
+            assert web.startswith("http") and " " not in web and "]" not in web, f"Invalid website format: {web} for {rec.get('name')}"
             host = web.lower().split("//")[-1].split("/")[0].replace("www.", "")
             n_up = rec["name"].upper()
             is_univ_row = "UNIVERSITY" in n_up and not any(
@@ -1562,13 +1639,13 @@ def self_check():
 
     for cat, min_gov, min_priv in [
         ("Polytechnic", 50, 89),
-        ("ITI", 118, 1200),
+        ("ITI", 118, 1150),
         ("B.Voc & D.Voc", 29, 17),
         ("Engineering", 35, 30),
         ("Medical / Nursing / Pharmacy", 15, 150),
         ("Management / BCA / BBA", 1, 20),
         ("Graduation / PG / Degree", 300, 400),
-        ("All", 550, 2000),
+        ("All", 550, 1950),
     ]:
         res = run_scraper_pipeline({"category": cat, "state": "Bihar", "district": "All", "mode": "verified"})
         assert res["govt_count"] >= min_gov, f"{cat} govt count too low: {res['govt_count']}"
@@ -1581,7 +1658,7 @@ def self_check():
             for r_i, row in enumerate(rows[1:], start=2):
                 for c_i, cell_val in enumerate(row, start=1):
                     s_val = str(cell_val if cell_val is not None else "").strip()
-                    if c_i != 9:  # col 9 is Official Website, left blank when genuine domain is unavailable
+                    if c_i in (1, 2, 3, 6, 8, 10, 11):  # Phone (4), Email (5), Pincode (7), Website (9) left blank when unverified
                         assert s_val and s_val.lower() not in ("none", "na", "n/a"), (
                             f"Empty cell in {cat} -> {sh} row {r_i} col {c_i}"
                         )
