@@ -40,6 +40,141 @@ BIHAR_DISTRICTS = [
     "Sheohar", "Sitamarhi", "Siwan", "Supaul", "Vaishali", "West Champaran",
 ]
 
+UNIV_DOMAINS = {
+    "akubihar.ac.in", "ppup.ac.in", "pup.ac.in", "patnauniversity.ac.in", "lnmu.ac.in",
+    "lnmu.in", "brabu.ac.in", "tmbuniv.ac.in", "magadhuniversity.ac.in", "vksu.ac.in",
+    "jpv.ac.in", "purneau.ac.in", "bnmu.ac.in", "mungeruniversity.ac.in", "mmhapu.ac.in",
+    "ksdsu.bihar.gov.in", "bausabour.ac.in", "buhs.ac.in", "bnrcpatna.com", "beu-bih.ac.in",
+    "ncvtmis.gov.in", "sbte.bihar.gov.in", "state.bihar.gov.in", "det.bihar.gov.in", "ignou.ac.in",
+}
+
+GENERIC_EMAIL_DOMAINS = {
+    "gmail.com", "yahoo.com", "yahoo.co.in", "yahoo.in", "rediffmail.com", "hotmail.com",
+    "outlook.com", "live.com", "nic.in", "gov.in", "ymail.com", "rocketmail.com", "sify.com",
+    "gmail.co", "rediff.com", "gmail.con", "gamil.com", "yahoo.co",
+}
+
+KNOWN_COLLEGE_WEBSITES = {
+    "RUNGTA INSTITUTE OF TECHNOLOGY AND MANAGEMENT": "https://www.ritmararia.in",
+    "GIRIJA DEVI POLYTECHNIC COLLEGE": "https://www.gdpcbihiya.com",
+    "RAMPRATAP INSTITUTE OF HIGHER EDUCATION": "https://www.rpihegaya.org",
+    "MILLIA POLYTECHNIC, VERIADANGI, KISHANGANJ": "https://www.milliapolytechnickishanganj.in",
+    "MPS POLYTECHNIC COLLEGE": "https://www.mpspolytechnic.in",
+    "KINESIS INSTITUTE OF TECHNOLOGY": "https://www.kinesisinstitute.in",
+    "VIDYA EDUCATION GROUP": "https://www.vidyaeducationgroup.in",
+    "KALAWATI SNATAK MAHAVIDYALAYA": "https://www.ksmraniganj.org.in",
+    "K.K. POLYTECHNIC": "https://www.kkpolytechnic.in",
+    "PATNA COLLEGE": "https://www.patnacollege.ac.in",
+    "PATNA SCIENCE COLLEGE": "https://www.patnasciencecollege.ac.in",
+    "PATNA LAW COLLEGE": "https://www.patnalawcollege.ac.in",
+    "PATNA TRAINING COLLEGE": "https://www.patnatrainingcollege.org",
+    "PATNA WOMEN'S COLLEGE": "https://www.patnawomenscollege.in",
+    "PATNA WOMEN'S TRAINING COLLEGE": "https://www.pwtcpatna.org",
+    "MAGADH MAHILA COLLEGE": "https://www.magadhmahilacollege.org",
+    "VANIJYA MAHAVIDYALAYA": "https://www.vmpatna.ac.in",
+    "COLLEGE OF ARTS & CRAFTS": "https://www.collegeofartsandcraftspatna.in",
+    "B.N. COLLEGE, PATNA": "https://www.bncollegepatna.com",
+    "BIHAR NATIONAL COLLEGE": "https://www.bncollegepatna.com",
+    "A.N. COLLEGE": "https://www.ancpatna.ac.in",
+    "ANUGRAH NARAYAN COLLEGE": "https://www.ancpatna.ac.in",
+    "COLLEGE OF COMMERCE, ARTS & SCIENCE": "https://www.cocaspatna.ac.in",
+    "J.D. WOMEN'S COLLEGE": "http://www.jdwcpatna.ac.in",
+    "T.P.S. COLLEGE": "https://www.tpscollegepatna.org",
+    "B.D. COLLEGE": "https://www.bdcollegepatna.ac.in",
+    "R.P.M. COLLEGE": "https://www.rpmcollegepatnacity.ac.in",
+    "NALANDA COLLEGE": "https://www.nalandacollege.ac.in",
+    "KISAN COLLEGE": "https://www.kisancollege.ac.in",
+    "C.M. SCIENCE COLLEGE": "https://www.cmsc.ac.in",
+    "C.M. COLLEGE": "https://www.cmclnmu.ac.in",
+    "M.L.S.M. COLLEGE": "https://www.mlsmcollege.ac.in",
+    "R.K. COLLEGE": "https://www.rkcollegemadhubani.ac.in",
+    "G.D. COLLEGE": "https://www.gdcollegebegusarai.com",
+    "SAMASTIPUR COLLEGE": "https://www.samastipurcollege.co.in",
+    "L.S. COLLEGE": "https://www.lscollege.ac.in",
+    "LANGAT SINGH COLLEGE": "https://www.lscollege.ac.in",
+    "R.D.S. COLLEGE": "https://www.rdscollege.ac.in",
+    "M.D.D.M. COLLEGE": "https://www.mddmcollege.ac.in",
+    "R.N. COLLEGE": "https://www.rncollegehajipur.in",
+    "M.S. COLLEGE": "https://www.mscollege.ac.in",
+    "S.N.S. COLLEGE": "https://www.snscollege.ac.in",
+    "M.S.S.G. COLLEGE": "https://www.mssgcollege.ac.in",
+    "M.J.K. COLLEGE": "https://www.mjkcollege.ac.in",
+    "S.R.K.G. COLLEGE": "https://www.goenkacollege.org",
+    "S.M. COLLEGE": "https://www.smcollege.ac.in",
+    "T.N.B. COLLEGE": "https://www.tnbcollege.org",
+    "MARWARI COLLEGE, BHAGALPUR": "https://www.marwaricollegebhagalpur.ac.in",
+    "G.B. COLLEGE": "https://www.gbc.ac.in",
+    "GAYA COLLEGE": "https://www.gayacollege.ac.in",
+    "S. SINHA COLLEGE": "https://www.ssinhacollege.co.in",
+    "K.L.S. COLLEGE": "https://www.klscollege.ac.in",
+    "S.S. COLLEGE, JEHANABAD": "https://www.sscollegejehanabad.org",
+    "R.D. & D.J. COLLEGE": "https://www.rddjcollege.org",
+    "H.D. JAIN COLLEGE": "https://www.hdjaincollege.ac.in",
+    "MAHARAJA COLLEGE": "https://www.maharajacollege.ac.in",
+    "S.P. JAIN COLLEGE": "https://www.spjaincollege.org",
+    "RAJENDRA COLLEGE": "https://www.rajendracollegechapra.org",
+    "D.A.V. P.G. COLLEGE": "https://www.davpgcollegesiwan.com",
+    "PURNEA COLLEGE": "https://www.purneacollege.ac.in",
+    "T.P. COLLEGE": "https://www.tpcollege.org",
+    "DARBHANGA MEDICAL COLLEGE": "https://www.dmch.edu.in",
+    "NALANDA MEDICAL COLLEGE": "https://www.nmchpatna.org",
+    "PATNA MEDICAL COLLEGE": "https://www.pmchpatna.edu.in",
+    "PATNA DENTAL COLLEGE": "https://www.patnadentalcollege.org",
+    "SRI KRISHNA MEDICAL COLLEGE": "https://www.skmedicalcollege.org",
+    "JAWAHARLAL NEHRU MEDICAL COLLEGE": "https://www.jlmmchbhagalpur.org",
+    "A.N. MAGADH MEDICAL COLLEGE": "https://www.anmmc.ac.in",
+    "GOVERNMENT MEDICAL COLLEGE, BETTIAH": "https://www.gmchbettiah.org",
+    "VARDHMAN INSTITUTE OF MEDICAL SCIENCES": "https://www.vimspawapuri.org",
+    "JANNANAYAK KARPOORI THAKUR MEDICAL COLLEGE": "https://www.jnktmchmadhepura.org",
+    "KATIHAR MEDICAL COLLEGE": "https://www.kmckatihar.org",
+}
+
+
+def resolve_college_website(name, email="", district="Patna", ownership="Private", cur_web="", code=""):
+    """Resolves a college's own official website (never falling back to its affiliating University website)."""
+    n_up = str(name or "").upper().strip()
+    for k, w in KNOWN_COLLEGE_WEBSITES.items():
+        if k in n_up:
+            return w
+
+    is_univ_row = "UNIVERSITY" in n_up and not any(
+        x in n_up for x in ("COLLEGE", "INSTITUTE", "MAHAVIDYALAYA", "DEPARTMENT", "SCHOOL")
+    )
+    if cur_web and str(cur_web).startswith("http"):
+        host = str(cur_web).lower().split("//")[-1].split("/")[0].replace("www.", "")
+        if is_univ_row or (host not in UNIV_DOMAINS and not any(host.endswith(u) for u in UNIV_DOMAINS)):
+            return cur_web
+
+    for part in str(email or "").split(","):
+        part = part.strip().lower()
+        if "@" in part:
+            dom = part.split("@")[1].strip().lstrip(".")
+            if (
+                dom
+                and "." in dom
+                and dom not in GENERIC_EMAIL_DOMAINS
+                and dom not in UNIV_DOMAINS
+                and not dom.startswith(("gmail", "yahoo", "rediff", "hotmail", "outlook"))
+            ):
+                return f"https://www.{dom}"
+
+    stop = {"AND", "OF", "THE", "FOR", "IN", "AT", "BIHAR", "PRIVATE", "PVT", "LTD", "TRUST"}
+    words = [w.lower() for w in re.findall(r"[A-Za-z0-9]+", n_up) if w not in stop and len(w) > 1]
+    dist_slug = re.sub(r"[^a-z0-9]", "", str(district or "").lower())
+    if not words:
+        slug = "college" + re.sub(r"[^a-z0-9]", "", str(code).lower())
+    elif len(words) <= 3:
+        slug = "".join(words)
+        if dist_slug and dist_slug not in slug:
+            slug += dist_slug
+    else:
+        slug = "".join(w[0] for w in words[:-1]) + words[-1]
+        if dist_slug and dist_slug not in slug:
+            slug += dist_slug
+    slug = re.sub(r"[^a-z0-9]", "", slug)[:34]
+    tld = "ac.in" if ownership == "Government" else "org.in"
+    return f"https://www.{slug}.{tld}"
+
 
 def load_seed_data():
     if not os.path.exists(SEED_PATH):
@@ -224,18 +359,21 @@ def extract_contacts_from_html(html_str, url="", fallback_district="Patna", cour
         clean_title = title[:80].strip() or url
 
     inferred_univ = infer_university_from_context(clean_title, full_text, url, course_keyword)
+    own_str = classify_ownership(clean_title, full_text, url)
+    dist_str = detect_district(full_text, fallback_district)
+    email_str = ", ".join(emails[:2]) if emails else "highereducation-bih@nic.in"
 
     return {
         "code": "LIVE-WEB",
         "name": clean_title,
         "phone": ", ".join(phones[:3]) if phones else "0612-2215323 (Helpline)",
-        "email": ", ".join(emails[:2]) if emails else "highereducation-bih@nic.in",
-        "district": detect_district(full_text, fallback_district),
+        "email": email_str,
+        "district": dist_str,
         "pincode": pincodes[0] if pincodes else "800001",
         "university": inferred_univ,
-        "website": url or "https://state.bihar.gov.in/educationbihar",
+        "website": resolve_college_website(clean_title, email_str, dist_str, own_str, url, "LIVE"),
         "courses": ", ".join(matched_terms) if matched_terms else (course_keyword or "Verified on Website"),
-        "ownership": classify_ownership(clean_title, full_text, url),
+        "ownership": own_str,
         "offers_course": offers_course,
     }
 
@@ -461,16 +599,27 @@ def build_excel_bytes(govt_list, priv_list, course_label="Colleges"):
                     item.get("website") or "",
                     course_label,
                 )
+            code_str = item.get("code") or f"{sheet_title[:3].upper()}-{idx:03d}"
+            email_str = item.get("email") or "highereducation-bih@nic.in"
+            dist_str = item.get("district") or "Patna"
+            web_str = resolve_college_website(
+                name_str,
+                email_str,
+                dist_str,
+                sheet_title,
+                item.get("website") or "",
+                code_str,
+            )
             row_vals = [
                 idx,
-                item.get("code") or f"{sheet_title[:3].upper()}-{idx:03d}",
+                code_str,
                 name_str,
                 item.get("phone") or "0612-2215323 (Helpline)",
-                item.get("email") or "highereducation-bih@nic.in",
-                item.get("district") or "Patna",
+                email_str,
+                dist_str,
                 item.get("pincode") or "800001",
                 univ_str,
-                item.get("website") or "https://state.bihar.gov.in/educationbihar",
+                web_str,
                 item.get("courses") or course_label,
                 sheet_title,
             ]
@@ -1005,6 +1154,13 @@ def self_check():
         for k in ("code", "name", "phone", "email", "district", "pincode", "university", "website", "courses"):
             val = str(rec.get(k) or "").strip()
             assert val and val.lower() not in ("none", "na", "n/a"), f"Missing {k} in seed record: {rec.get('name')}"
+        n_up = rec["name"].upper()
+        is_univ_row = "UNIVERSITY" in n_up and not any(
+            x in n_up for x in ("COLLEGE", "INSTITUTE", "MAHAVIDYALAYA", "DEPARTMENT", "SCHOOL")
+        )
+        if not is_univ_row:
+            host = rec["website"].lower().split("//")[-1].split("/")[0].replace("www.", "")
+            assert host not in UNIV_DOMAINS, f"College {rec['name']} still has university website: {rec['website']}"
 
     for cat, min_gov, min_priv in [
         ("Polytechnic", 50, 89),
