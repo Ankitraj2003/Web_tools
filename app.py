@@ -1,3 +1,4 @@
+import csv
 import io
 import json
 import os
@@ -84,6 +85,14 @@ UNIV_DOMAINS = {
     "jpv.ac.in", "purneau.ac.in", "bnmu.ac.in", "mungeruniversity.ac.in", "mmhapu.ac.in",
     "ksdsu.bihar.gov.in", "bausabour.ac.in", "buhs.ac.in", "bnrcpatna.com", "beu-bih.ac.in",
     "ncvtmis.gov.in", "sbte.bihar.gov.in", "state.bihar.gov.in", "det.bihar.gov.in", "ignou.ac.in",
+}
+
+AGGREGATOR_DOMAINS = {
+    "collegedunia.com", "collegedekho.com", "shiksha.com", "careers360.com",
+    "jagranjosh.com", "getmyuni.com", "targetadmission.com", "entrancezone.com",
+    "sarvgyan.com", "indiastudychannel.com", "zollege.in", "infinitecourses.com",
+    "admission24.com", "vidyavision.com", "universitydunia.com", "highereducationdigest.com",
+    "bing.com", "google.com", "duckduckgo.com", "yahoo.com",
 }
 
 GENERIC_EMAIL_DOMAINS = {
@@ -180,7 +189,11 @@ def resolve_college_website(name, email="", district="Patna", ownership="Private
     )
     if cur_web and str(cur_web).startswith("http"):
         host = str(cur_web).lower().split("//")[-1].split("/")[0].replace("www.", "")
-        if is_univ_row or (host not in UNIV_DOMAINS and not any(host.endswith(u) for u in UNIV_DOMAINS)):
+        if (
+            (is_univ_row or (host not in UNIV_DOMAINS and not any(host.endswith(u) for u in UNIV_DOMAINS)))
+            and host not in AGGREGATOR_DOMAINS
+            and not any(host.endswith(a) for a in AGGREGATOR_DOMAINS)
+        ):
             return cur_web
 
     for part in str(email or "").split(","):
@@ -192,26 +205,13 @@ def resolve_college_website(name, email="", district="Patna", ownership="Private
                 and "." in dom
                 and dom not in GENERIC_EMAIL_DOMAINS
                 and dom not in UNIV_DOMAINS
+                and dom not in AGGREGATOR_DOMAINS
                 and not dom.startswith(("gmail", "yahoo", "rediff", "hotmail", "outlook"))
             ):
                 return f"https://www.{dom}"
 
-    stop = {"AND", "OF", "THE", "FOR", "IN", "AT", "BIHAR", "PRIVATE", "PVT", "LTD", "TRUST"}
-    words = [w.lower() for w in re.findall(r"[A-Za-z0-9]+", n_up) if w not in stop and len(w) > 1]
-    dist_slug = re.sub(r"[^a-z0-9]", "", str(district or "").lower())
-    if not words:
-        slug = "college" + re.sub(r"[^a-z0-9]", "", str(code).lower())
-    elif len(words) <= 3:
-        slug = "".join(words)
-        if dist_slug and dist_slug not in slug:
-            slug += dist_slug
-    else:
-        slug = "".join(w[0] for w in words[:-1]) + words[-1]
-        if dist_slug and dist_slug not in slug:
-            slug += dist_slug
-    slug = re.sub(r"[^a-z0-9]", "", slug)[:34]
-    tld = "ac.in" if ownership == "Government" else "org.in"
-    return f"https://www.{slug}.{tld}"
+    # If no genuine institutional website is found, leave blank (""). Never synthesize fake/hypothetical domain slugs.
+    return ""
 
 
 def load_seed_data():
@@ -448,8 +448,8 @@ def extract_colleges_from_html(html_str, url="", fallback_district="Patna", cour
     extracted = []
     seen = set()
 
-    # Strategy A: Multi-college directory/listing extraction (from h2, h3, h4 headings)
-    headings = re.findall(r"<h[234][^>]*>(.*?)</h[234]>", html_str, re.DOTALL | re.I)
+    # Strategy A: Multi-college directory/listing extraction (from h2, h3, h4, h5 headings)
+    headings = re.findall(r"<h[2345][^>]*>(.*?)</h[2345]>", html_str, re.DOTALL | re.I)
     for h in headings:
         cname = clean_college_name(h)
         if is_valid_college_name(cname):
@@ -485,7 +485,17 @@ def extract_colleges_from_html(html_str, url="", fallback_district="Patna", cour
                 dist = detect_district(cname + " " + href, fallback_district)
                 own = classify_ownership(cname, "", href)
                 univ = infer_university_from_context(cname, full_text, href, course_keyword)
-                web = resolve_college_website(cname, default_email, dist, own, href if href.startswith("http") else "", "LIVE")
+                h_web = ""
+                if href and href.startswith("http"):
+                    h_host = href.lower().split("//")[-1].split("/")[0].replace("www.", "")
+                    if (
+                        h_host not in AGGREGATOR_DOMAINS
+                        and h_host not in BLOCKED_SEARCH_DOMAINS
+                        and h_host not in UNIV_DOMAINS
+                        and not any(h_host.endswith(a) for a in AGGREGATOR_DOMAINS)
+                    ):
+                        h_web = href
+                web = resolve_college_website(cname, default_email, dist, own, h_web, "LIVE")
                 extracted.append({
                     "code": "LIVE-DIR",
                     "name": cname,
@@ -500,7 +510,33 @@ def extract_colleges_from_html(html_str, url="", fallback_district="Patna", cour
                     "offers_course": True,
                 })
 
-    # Strategy C: Standalone college website (single college extraction)
+    # Strategy C: Table rows/cells (e.g. government board directories & university lists)
+    table_cells = re.findall(r"<td[^>]*>(.*?)</td>", html_str, re.DOTALL | re.I)
+    for cell in table_cells:
+        cname = clean_college_name(cell)
+        if is_valid_college_name(cname):
+            norm = re.sub(r"[^A-Z0-9]", "", cname.upper())
+            if norm not in seen:
+                seen.add(norm)
+                dist = detect_district(cname + " " + full_text[:2000], fallback_district)
+                own = classify_ownership(cname, "", url)
+                univ = infer_university_from_context(cname, full_text, url, course_keyword)
+                web = resolve_college_website(cname, default_email, dist, own, "", "LIVE")
+                extracted.append({
+                    "code": "LIVE-TABLE",
+                    "name": cname,
+                    "phone": default_phone,
+                    "email": default_email,
+                    "district": dist,
+                    "pincode": default_pin,
+                    "university": univ,
+                    "website": web,
+                    "courses": matched_stream,
+                    "ownership": own,
+                    "offers_course": True,
+                })
+
+    # Strategy D: Standalone college website (single college extraction)
     if not extracted:
         title = parser.title or url
         clean_title = clean_college_name(re.sub(r"\s*[\-|–|—|\|].*$", "", title))
@@ -508,7 +544,16 @@ def extract_colleges_from_html(html_str, url="", fallback_district="Patna", cour
             own = classify_ownership(clean_title, full_text, url)
             dist = detect_district(clean_title + " " + full_text[:2000], fallback_district)
             univ = infer_university_from_context(clean_title, full_text, url, course_keyword)
-            web = resolve_college_website(clean_title, default_email, dist, own, url, "LIVE")
+            url_host = url.lower().split("//")[-1].split("/")[0].replace("www.", "")
+            url_web = ""
+            if (
+                url_host not in AGGREGATOR_DOMAINS
+                and url_host not in BLOCKED_SEARCH_DOMAINS
+                and url_host not in UNIV_DOMAINS
+                and not any(url_host.endswith(a) for a in AGGREGATOR_DOMAINS)
+            ):
+                url_web = url
+            web = resolve_college_website(clean_title, default_email, dist, own, url_web, "LIVE")
             extracted.append({
                 "code": "LIVE-WEB",
                 "name": clean_title,
@@ -659,6 +704,8 @@ def run_scraper_pipeline(params):
                 f"{clean_course} colleges {dist_part}{state} list official website".strip(),
                 f"top {clean_course} colleges {dist_part}{state}".strip(),
                 f"government private {clean_course} colleges {dist_part}{state}".strip(),
+                f"list of {clean_course} colleges institute university in {state} directory".strip(),
+                f"{state} higher education {clean_course} affiliated colleges list".strip(),
             ]
             for q in search_queries:
                 for u in search_web_urls(q, max_results=8):
@@ -667,9 +714,9 @@ def run_scraper_pipeline(params):
 
         if urls_to_crawl:
             fallback_dist = "Patna" if district.lower() == "all" else district
-            with ThreadPoolExecutor(max_workers=8) as pool:
+            with ThreadPoolExecutor(max_workers=10) as pool:
                 future_to_url = {
-                    pool.submit(fetch_html, u, 8): u for u in urls_to_crawl[:18]
+                    pool.submit(fetch_html, u, 8): u for u in urls_to_crawl[:24]
                 }
                 for fut in as_completed(future_to_url):
                     u = future_to_url[fut]
@@ -836,6 +883,76 @@ def build_excel_bytes(govt_list, priv_list, course_label="Colleges"):
     return data_bytes
 
 
+def build_csv_bytes(govt_list, priv_list, course_label="Colleges"):
+    buf = io.StringIO()
+    writer = csv.writer(buf, lineterminator="\r\n")
+    headers = [
+        "S.No.",
+        "College Code",
+        "Name of the College / University",
+        "Contact No",
+        "Email ID",
+        "District",
+        "Pincode",
+        "University / Affiliating Body",
+        "Official Website",
+        "Course / Stream Offered",
+        "Ownership",
+    ]
+    writer.writerow(headers)
+
+    s_no = 1
+    for sheet_title, rows_data in [("Government", govt_list), ("Private", priv_list)]:
+        for idx, item in enumerate(rows_data, start=1):
+            name_str = item.get("name") or ""
+            univ_str = (item.get("university") or "").strip()
+            if not univ_str or univ_str.lower() in ("none", "na", "n/a"):
+                univ_str = infer_university_from_context(
+                    name_str,
+                    item.get("courses") or "",
+                    item.get("website") or "",
+                    course_label,
+                )
+            code_str = item.get("code") or f"{sheet_title[:3].upper()}-{idx:03d}"
+            email_str = item.get("email") or "highereducation-bih@nic.in"
+            dist_str = item.get("district") or "Patna"
+            web_str = resolve_college_website(
+                name_str,
+                email_str,
+                dist_str,
+                sheet_title,
+                item.get("website") or "",
+                code_str,
+            )
+            writer.writerow([
+                s_no,
+                code_str,
+                name_str,
+                item.get("phone") or "0612-2215323 (Helpline)",
+                email_str,
+                dist_str,
+                item.get("pincode") or "800001",
+                univ_str,
+                web_str,
+                item.get("courses") or course_label,
+                sheet_title,
+            ])
+            s_no += 1
+
+    csv_data = b"\xef\xbb\xbf" + buf.getvalue().encode("utf-8")
+
+    try:
+        os.makedirs(EXPORT_DIR, exist_ok=True)
+        safe_name = re.sub(r"[^A-Za-z0-9_\-]+", "_", course_label).strip("_") or "Colleges"
+        local_path = os.path.join(EXPORT_DIR, f"Bihar_{safe_name}_Govt_and_Private.csv")
+        with open(local_path, "wb") as f:
+            f.write(csv_data)
+    except Exception:
+        pass
+
+    return csv_data
+
+
 DASHBOARD_HTML = """<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -920,6 +1037,8 @@ DASHBOARD_HTML = """<!DOCTYPE html>
   .btn-primary:hover { background: var(--primary-hover); }
   .btn-excel { background: #15803d; color: #fff; }
   .btn-excel:hover { background: #166534; }
+  .btn-csv { background: #0284c7; color: #fff; }
+  .btn-csv:hover { background: #0369a1; }
   .stats-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
@@ -1082,7 +1201,8 @@ DASHBOARD_HTML = """<!DOCTYPE html>
     <div class="actions">
       <button class="btn-primary" id="btnScrape" onclick="runScrape()">1. Scrape & Collect Data</button>
       <button class="btn-excel" id="btnExport" onclick="downloadExcel()">2. Download Excel (.xlsx — Government & Private Sheets)</button>
-      <span id="statusMsg">Ready. Click "Scrape & Collect Data" to preview or "Download Excel" to export immediately.</span>
+      <button class="btn-csv" id="btnExportCsv" onclick="downloadCsv()">3. Download CSV (.csv)</button>
+      <span id="statusMsg">Ready. Click "Scrape & Collect Data" to preview or "Download Excel" / "Download CSV" to export.</span>
     </div>
   </div>
 
@@ -1209,7 +1329,9 @@ function renderTable() {
   }
 
   tbody.innerHTML = filtered.map((r, i) => {
-    const web = r.website ? `<a href="${escapeHtml(r.website)}" target="_blank" rel="noopener">${escapeHtml(r.website)}</a>` : '-';
+    const web = (r.website && String(r.website).trim())
+      ? `<a href="${escapeHtml(r.website)}" target="_blank" rel="noopener">${escapeHtml(r.website)}</a>`
+      : '<span style="color:#94a3b8; font-weight:500;">—</span>';
     const badgeClass = activeTab === 'Government' ? 'badge-gov' : 'badge-priv';
     return `<tr>
       <td>${i + 1}</td>
@@ -1252,6 +1374,33 @@ async function downloadExcel() {
   }
 }
 
+async function downloadCsv() {
+  const statusEl = document.getElementById('statusMsg');
+  statusEl.textContent = 'Generating CSV file (.csv)...';
+  try {
+    const payload = getFormPayload();
+    const res = await fetch('/api/export_csv', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+    if (!res.ok) throw new Error('Failed to generate CSV');
+    const blob = await res.blob();
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    const label = (payload.custom_query || payload.category || 'Colleges').replace(/[^A-Za-z0-9]+/g, '_');
+    a.href = url;
+    a.download = `${payload.state || 'Bihar'}_${label}_Govt_and_Private.csv`;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    window.URL.revokeObjectURL(url);
+    statusEl.textContent = 'CSV file downloaded successfully!';
+  } catch (err) {
+    statusEl.textContent = 'Export CSV error: ' + err.message;
+  }
+}
+
 window.addEventListener('DOMContentLoaded', () => { runScrape(); });
 </script>
 </body>
@@ -1286,7 +1435,7 @@ def app(environ, start_response):
         )
         return [body]
 
-    if path in ("/api/scrape", "/api/export") and method == "POST":
+    if path in ("/api/scrape", "/api/export", "/api/export_csv") and method == "POST":
         try:
             length = int(environ.get("CONTENT_LENGTH") or 0)
         except ValueError:
@@ -1309,6 +1458,24 @@ def app(environ, start_response):
                 ],
             )
             return [body]
+
+        if path == "/api/export_csv":
+            csv_bytes = build_csv_bytes(
+                data["government"],
+                data["private"],
+                course_label=data.get("query") or "Colleges",
+            )
+            safe_label = re.sub(r"[^A-Za-z0-9_\-]+", "_", data.get("query") or "Colleges").strip("_")
+            filename = f"{data.get('state', 'Bihar')}_{safe_label}_Govt_and_Private.csv"
+            start_response(
+                "200 OK",
+                [
+                    ("Content-Type", "text/csv; charset=utf-8"),
+                    ("Content-Disposition", f'attachment; filename="{filename}"'),
+                    ("Content-Length", str(len(csv_bytes))),
+                ],
+            )
+            return [csv_bytes]
 
         # /api/export -> Return .xlsx file
         xlsx_bytes = build_excel_bytes(
@@ -1337,16 +1504,19 @@ def self_check():
     """Assert-based self-check verifying scraper pipeline, Excel generation, and WSGI routes."""
     assert len(SEED_DATA) >= 2600, f"Expected >=2600 seed records, got {len(SEED_DATA)}"
     for rec in SEED_DATA:
-        for k in ("code", "name", "phone", "email", "district", "pincode", "university", "website", "courses"):
+        for k in ("code", "name", "phone", "email", "district", "pincode", "university", "courses"):
             val = str(rec.get(k) or "").strip()
             assert val and val.lower() not in ("none", "na", "n/a"), f"Missing {k} in seed record: {rec.get('name')}"
-        n_up = rec["name"].upper()
-        is_univ_row = "UNIVERSITY" in n_up and not any(
-            x in n_up for x in ("COLLEGE", "INSTITUTE", "MAHAVIDYALAYA", "DEPARTMENT", "SCHOOL")
-        )
-        if not is_univ_row:
-            host = rec["website"].lower().split("//")[-1].split("/")[0].replace("www.", "")
-            assert host not in UNIV_DOMAINS, f"College {rec['name']} still has university website: {rec['website']}"
+        web = str(rec.get("website") or "").strip()
+        if web:
+            assert web.startswith("http"), f"Invalid website format: {web} for {rec.get('name')}"
+            host = web.lower().split("//")[-1].split("/")[0].replace("www.", "")
+            n_up = rec["name"].upper()
+            is_univ_row = "UNIVERSITY" in n_up and not any(
+                x in n_up for x in ("COLLEGE", "INSTITUTE", "MAHAVIDYALAYA", "DEPARTMENT", "SCHOOL")
+            )
+            if not is_univ_row:
+                assert host not in UNIV_DOMAINS, f"College {rec['name']} still has university website: {rec['website']}"
 
     for cat, min_gov, min_priv in [
         ("Polytechnic", 50, 89),
@@ -1369,15 +1539,19 @@ def self_check():
             for r_i, row in enumerate(rows[1:], start=2):
                 for c_i, cell_val in enumerate(row, start=1):
                     s_val = str(cell_val if cell_val is not None else "").strip()
-                    assert s_val and s_val.lower() not in ("none", "na", "n/a"), (
-                        f"Empty cell in {cat} -> {sh} row {r_i} col {c_i}"
-                    )
+                    if c_i != 9:  # col 9 is Official Website, left blank when genuine domain is unavailable
+                        assert s_val and s_val.lower() not in ("none", "na", "n/a"), (
+                            f"Empty cell in {cat} -> {sh} row {r_i} col {c_i}"
+                        )
         wb.close()
 
-    # WSGI route check for /, /health, /api/scrape, /api/export
+    # WSGI route check for /, /health, /api/scrape, /api/export, /api/export_csv
     statuses = []
     html_body = b"".join(app({"PATH_INFO": "/", "REQUEST_METHOD": "GET"}, lambda s, h: statuses.append(s))).decode("utf-8")
     assert statuses[-1] == "200 OK" and "College Web Scraper & Excel Exporter Dashboard" in html_body
+
+    health_body = b"".join(app({"PATH_INFO": "/health", "REQUEST_METHOD": "GET"}, lambda s, h: statuses.append(s))).decode("utf-8")
+    assert statuses[-1] == "200 OK" and "ok" in health_body
 
     payload = json.dumps({"category": "B.Voc & D.Voc", "state": "Bihar"}).encode("utf-8")
     scrape_body = b"".join(
@@ -1407,7 +1581,21 @@ def self_check():
     )
     assert statuses[-1] == "200 OK" and len(export_body) > 5000
 
-    print("SELF-CHECK PASSED: All WSGI routes (/, /api/scrape, /api/export), categories, and two-sheet Excel exports verified.")
+    csv_export_body = b"".join(
+        app(
+            {
+                "PATH_INFO": "/api/export_csv",
+                "REQUEST_METHOD": "POST",
+                "CONTENT_LENGTH": str(len(payload)),
+                "wsgi.input": io.BytesIO(payload),
+            },
+            lambda s, h: statuses.append(s),
+        )
+    )
+    assert statuses[-1] == "200 OK" and len(csv_export_body) > 2000
+    assert b"Name of the College / University" in csv_export_body
+
+    print("SELF-CHECK PASSED: All WSGI routes (/, /health, /api/scrape, /api/export, /api/export_csv), categories, and exports verified.")
 
 
 if __name__ == "__main__":
