@@ -270,17 +270,17 @@ class PageTextAndLinkParser(HTMLParser):
             self._cur_link_text.append(cleaned)
 
 
-def fetch_html(url, timeout=8):
+def fetch_html(url, timeout=10):
     req = urllib.request.Request(
         url,
         headers={
             "User-Agent": USER_AGENT,
-            "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+            "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8",
             "Accept-Language": "en-IN,en-US;q=0.9,en;q=0.8",
         },
     )
     with urllib.request.urlopen(req, timeout=timeout) as resp:
-        raw = resp.read(350_000)
+        raw = resp.read(1_250_000)
         return raw.decode("utf-8", errors="ignore")
 
 
@@ -447,6 +447,38 @@ def extract_colleges_from_html(html_str, url="", fallback_district="Patna", cour
 
     extracted = []
     seen = set()
+
+    # Strategy 0: ITI Directory Dedicated Extractor (https://iti.directory/)
+    if "iti.directory" in url:
+        iti_links = re.findall(r'<a href="(/([^/]+)/([^"]+))">([^<]+)</a>', html_str)
+        for rel_href, dist_slug, slug, raw_name in iti_links:
+            clean_name = clean_college_name(raw_name)
+            dist_cand = dist_slug.capitalize()
+            if dist_cand.lower() in ("sites", "bihar-iti", "about-iti-directory", "iti-admission", "find-iti", "up-iti"):
+                continue
+            if is_valid_college_name(clean_name) or "ITI" in clean_name.upper() or "TRAINING" in clean_name.upper():
+                norm = re.sub(r"[^A-Z0-9]", "", clean_name.upper())
+                if norm not in seen:
+                    seen.add(norm)
+                    dist = detect_district(dist_cand + " " + clean_name, fallback_district)
+                    own = classify_ownership(clean_name, "", url)
+                    univ = "NCVT (DGT, Govt. of India) / SCVT Bihar"
+                    web = resolve_college_website(clean_name, default_email, dist, own, "", "LIVE")
+                    extracted.append({
+                        "code": "NCVT-DIR",
+                        "name": clean_name,
+                        "phone": default_phone,
+                        "email": default_email,
+                        "district": dist,
+                        "pincode": default_pin,
+                        "university": univ,
+                        "website": web,
+                        "courses": "Trades: Electrician, Fitter, Welder, COPA & Vocational Crafts",
+                        "ownership": own,
+                        "offers_course": True,
+                    })
+        if extracted:
+            return extracted
 
     # Strategy A: Multi-college directory/listing extraction (from h2, h3, h4, h5 headings)
     headings = re.findall(r"<h[2345][^>]*>(.*?)</h[2345]>", html_str, re.DOTALL | re.I)
@@ -712,11 +744,23 @@ def run_scraper_pipeline(params):
                     if u not in urls_to_crawl:
                         urls_to_crawl.append(u)
 
+            if "ITI" in effective_course.upper():
+                iti_candidates = [
+                    "https://iti.directory/bihar-iti",
+                    "https://iti.directory/bihar-iti/govt-iti",
+                    "https://iti.directory/bihar-iti/pvt-iti",
+                ]
+                if district.lower() != "all":
+                    iti_candidates.insert(0, f"https://iti.directory/bihar/{district.lower()}")
+                for iu in iti_candidates:
+                    if iu not in urls_to_crawl:
+                        urls_to_crawl.append(iu)
+
         if urls_to_crawl:
             fallback_dist = "Patna" if district.lower() == "all" else district
             with ThreadPoolExecutor(max_workers=10) as pool:
                 future_to_url = {
-                    pool.submit(fetch_html, u, 8): u for u in urls_to_crawl[:24]
+                    pool.submit(fetch_html, u, 10): u for u in urls_to_crawl[:24]
                 }
                 for fut in as_completed(future_to_url):
                     u = future_to_url[fut]
@@ -1250,7 +1294,7 @@ DASHBOARD_HTML = """<!DOCTYPE html>
           </tr>
         </thead>
         <tbody id="tableBody">
-          <tr><td colspan="9" style="text-align:center; padding: 2rem; color: #64748b;">Loading initial dataset...</td></tr>
+          <tr><td colspan="9" style="text-align:center; padding: 3rem 1rem; color: #64748b; font-size: 0.95rem;">Select your parameters above and click <strong>"1. Scrape &amp; Collect Data"</strong> to view matching colleges, or <strong>"2. Download Excel"</strong> / <strong>"3. Download CSV"</strong> to export.</td></tr>
         </tbody>
       </table>
     </div>
@@ -1400,8 +1444,6 @@ async function downloadCsv() {
     statusEl.textContent = 'Export CSV error: ' + err.message;
   }
 }
-
-window.addEventListener('DOMContentLoaded', () => { runScrape(); });
 </script>
 </body>
 </html>
