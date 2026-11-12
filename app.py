@@ -79,6 +79,8 @@ BLOCKED_SEARCH_DOMAINS = {
     "bookmyshow.com", "news18.com", "filmibeat.com", "thinkingbridge.in", "satyamcareers.in",
     "practo.com", "mdcomputers.in", "trawell.in", "justdial.com", "indiamart.com",
     "quora.com", "reddit.com", "tripadvisor.com", "mentoria.com",
+    "bhaskar.com", "dainikbhaskar.com", "jagran.com", "amarujala.com", "livehindustan.com",
+    "hindustantimes.com", "indiatimes.com", "ndtv.com", "aajtak.in",
 }
 
 COURSE_SYNONYMS = {
@@ -884,6 +886,16 @@ def update_seed_data_with_live_results(new_or_updated_items):
             if is_iti_institution(item.get("name"), item.get("category"), item.get("courses"), item.get("university")):
                 continue
 
+        # Guard: Never allow BSDM emails or websites into ITI, Polytechnic, Engineering or B.Voc
+        item_cat_up = str(item.get("category") or "").upper()
+        if item_cat_up in ("ITI", "POLYTECHNIC", "ENGINEERING", "B.VOC & D.VOC"):
+            if "biharskilldevelopmentmission" in str(item.get("email") or "").lower():
+                item["email"] = ", ".join([e.strip() for e in str(item.get("email") or "").split(",") if "biharskill" not in e.lower() and e.strip()])
+            if "biharskilldevelopmentmission" in str(item.get("website") or "").lower():
+                item["website"] = ""
+            if "BSDM" in str(item.get("university") or "").upper() and item_cat_up == "ITI":
+                continue
+
         code = str(item.get("code") or "").strip().upper()
         name_norm = re.sub(r"[^A-Z0-9]", "", str(item.get("name") or "").upper())
         dist = str(item.get("district") or "").strip().upper()
@@ -900,10 +912,15 @@ def update_seed_data_with_live_results(new_or_updated_items):
             for fld in ("phone", "email", "website", "pincode", "courses"):
                 new_val = str(item.get(fld) or "").strip()
                 old_val = str(existing.get(fld) or "").strip()
+                if existing.get("category", "").upper() in ("ITI", "POLYTECHNIC", "ENGINEERING", "B.VOC & D.VOC"):
+                    if "biharskill" in new_val.lower() or "highereducation-bih@nic.in" in new_val.lower():
+                        continue
                 if new_val and not old_val:
                     existing[fld] = new_val
                     modified = True
                 elif new_val and old_val and fld in ("phone", "email") and new_val not in old_val:
+                    if existing.get("category", "").upper() == "ITI" and "biharskill" in new_val.lower():
+                        continue
                     existing[fld] = f"{old_val}, {new_val}"
                     modified = True
             if modified:
@@ -1608,6 +1625,12 @@ class GoogleSearchResultsScraper:
         for p in PHONE_RE.findall(text):
             p_clean = p.strip(" ,.-")
             if p_clean and "0612-2215323" not in p_clean and p_clean not in phones:
+                # Exclude directory advertisement and state helpline numbers
+                if any(x in p_clean for x in ("9411029100", "9410432378", "011-25847036", "1800-123-6530", "1800-3456")):
+                    continue
+                # For landlines, must be Bihar STD codes
+                if p_clean.startswith("0") and not any(p_clean.startswith(std) for std in ("0612", "0621", "0624", "0634", "0641", "0618", "0627", "0645", "0646", "0631", "0632", "0633")):
+                    continue
                 phones.append(p_clean)
         emails = []
         for e in EMAIL_RE.findall(text):
@@ -1616,6 +1639,7 @@ class GoogleSearchResultsScraper:
                 "@" in el
                 and "." in el.split("@")[-1]
                 and el != "highereducation-bih@nic.in"
+                and "biharskill" not in el
                 and not el.endswith((".png", ".jpg", ".jpeg", ".gif", ".svg", ".webp", ".css", ".js"))
                 and el not in emails
             ):
@@ -1634,11 +1658,26 @@ class GoogleSearchResultsScraper:
 
         n_up = name.upper()
         is_eng = "ENGINEERING" in n_up or "TECHNOLOGY" in n_up
-        queries = [
-            f'"{name}" {dist} Bihar official website contact phone',
-            f'"{name}" engineering college BEU Bihar official website' if is_eng else f'"{name}" official website portal',
-            f'{name} {dist} contact number',
-        ]
+        is_iti = "ITI" in n_up or inst.get("category") == "ITI" or is_iti_institution(name)
+
+        if is_iti:
+            queries = [
+                f'"{name}" {dist} Bihar ITI official contact phone email',
+                f'"{name}" Industrial Training Institute {dist} Bihar contact',
+                f'"{name}" {dist} ITI contact number',
+            ]
+        elif is_eng:
+            queries = [
+                f'"{name}" {dist} Bihar official website contact phone',
+                f'"{name}" engineering college BEU Bihar official website',
+                f'"{name}" {dist} contact number',
+            ]
+        else:
+            queries = [
+                f'"{name}" {dist} Bihar official website contact phone',
+                f'"{name}" official website portal',
+                f'"{name}" {dist} contact number',
+            ]
 
         found_phones = []
         found_emails = []
@@ -1723,11 +1762,12 @@ def run_scraper_pipeline(params):
     effective_course = custom_query if custom_query else category
     is_target_bvoc = is_bvoc_dvoc_context(category) or is_bvoc_dvoc_context(effective_course)
     is_target_poly = (category.upper() == "POLYTECHNIC" or any(k in effective_course.upper() for k in ("POLYTECHNIC", "DIPLOMA IN ENGINEERING", "DIPLOMA ENGINEERING"))) and not any(k in effective_course.upper() for k in ("BSDM", "KYP", "DOMAIN", "SKILL"))
+    is_target_iti = (category.upper() == "ITI" or any(k in effective_course.upper() for k in ("ITI", "INDUSTRIAL TRAINING"))) and not is_target_bvoc and not is_target_poly
     results = []
     seen_names = set()
 
-    # Step 1: Filter from Verified Seed Dataset (when mode is 'hybrid' or 'verified')
-    if mode in ("hybrid", "verified"):
+    # Step 1: Filter from Verified Seed Dataset (when mode is 'hybrid' or 'verified', or when targeting strict standard directories like ITI / Polytechnic in live mode)
+    if mode in ("hybrid", "verified") or is_target_iti or is_target_poly:
         for item in SEED_DATA:
             if state and state.lower() != "all" and item.get("state", "Bihar").lower() != state.lower():
                 continue
@@ -1792,6 +1832,17 @@ def run_scraper_pipeline(params):
                 if (
                     item_cat.upper() in ("BSDM KYP CENTERS", "DOMAIN SKILLING CENTRES", "ITI")
                     or "BIHARSKILLDEVELOPMENTMISSION" in searchable
+                    or "BSDM" in item_univ.upper()
+                    or "biharskilldevelopmentmission" in str(item.get("email", "")).lower()
+                    or "biharskilldevelopmentmission" in str(item.get("website", "")).lower()
+                ):
+                    matched = False
+
+            # Strict isolation for ITI: Never allow BSDM KYP / Domain centers or non-ITI colleges to leak in
+            if matched and is_target_iti:
+                if (
+                    item_cat.upper() != "ITI"
+                    or not is_iti_institution(item_name, item_cat, item_courses, item_univ)
                     or "BSDM" in item_univ.upper()
                     or "biharskilldevelopmentmission" in str(item.get("email", "")).lower()
                     or "biharskilldevelopmentmission" in str(item.get("website", "")).lower()
@@ -1887,6 +1938,14 @@ def run_scraper_pipeline(params):
                                 or "biharskilldevelopmentmission" in str(info.get("website", "")).lower()
                             ):
                                 continue
+                            if is_target_iti and (
+                                info.get("category", "").upper() != "ITI"
+                                or not is_iti_institution(info.get("name"), info.get("category"), info.get("courses"), info.get("university"))
+                                or "BSDM" in str(info.get("university", "")).upper()
+                                or "biharskilldevelopmentmission" in str(info.get("email", "")).lower()
+                                or "biharskilldevelopmentmission" in str(info.get("website", "")).lower()
+                            ):
+                                continue
                             norm_name = re.sub(r"[^A-Z0-9]", "", info["name"].upper())
                             dedup_key = (info.get("district", "").upper(), info.get("code", "").upper(), norm_name)
                             if norm_name and dedup_key not in seen_names:
@@ -1912,6 +1971,14 @@ def run_scraper_pipeline(params):
                     continue
                 if is_target_poly and (
                     item.get("category", "").upper() in ("BSDM KYP CENTERS", "DOMAIN SKILLING CENTRES", "ITI")
+                    or "BSDM" in str(item.get("university", "")).upper()
+                    or "biharskilldevelopmentmission" in str(item.get("email", "")).lower()
+                    or "biharskilldevelopmentmission" in str(item.get("website", "")).lower()
+                ):
+                    continue
+                if is_target_iti and (
+                    item.get("category", "").upper() != "ITI"
+                    or not is_iti_institution(item.get("name"), item.get("category"), item.get("courses"), item.get("university"))
                     or "BSDM" in str(item.get("university", "")).upper()
                     or "biharskilldevelopmentmission" in str(item.get("email", "")).lower()
                     or "biharskilldevelopmentmission" in str(item.get("website", "")).lower()
@@ -1979,7 +2046,7 @@ def run_scraper_pipeline(params):
                 r["phone"] = college_ph
 
         # Clean up any misplaced BSDM emails or websites on non-BSDM colleges
-        if not any(k in n_up for k in ("BSDM", "KYP", "KUSHAL", "DOMAIN")):
+        if not any(k in n_up for k in ("BSDM", "KYP", "KUSHAL", "DOMAIN")) or is_target_iti or r.get("category") == "ITI":
             if "biharskilldevelopmentmission" in str(r.get("email", "")).lower():
                 r["email"] = ""
             if "biharskilldevelopmentmission" in str(r.get("website", "")).lower():
@@ -1991,7 +2058,8 @@ def run_scraper_pipeline(params):
                     r["email"] = em
                     break
         if not str(r.get("email") or "").strip():
-            r["email"] = u_em
+            if not is_target_iti and r.get("category") != "ITI":
+                r["email"] = u_em
 
         dist_val = r.get("district") or "Patna"
         if not str(r.get("pincode") or "").strip() or len(str(r.get("pincode")).strip()) != 6:
@@ -2030,6 +2098,17 @@ def run_scraper_pipeline(params):
                 or "biharskilldevelopmentmission" in str(r.get("email", "")).lower()
                 or "biharskilldevelopmentmission" in str(r.get("website", "")).lower()
             )
+        ]
+
+    # Strict final safety filter for ITI: Ensure 0 BSDM centers, Domain centers, or non-ITI colleges leak into ITI results
+    if is_target_iti:
+        results = [
+            r for r in results
+            if r.get("category", "").upper() == "ITI"
+            and is_iti_institution(r.get("name"), r.get("category"), r.get("courses"), r.get("university"))
+            and "BSDM" not in str(r.get("university", "")).upper()
+            and "biharskilldevelopmentmission" not in str(r.get("email", "")).lower()
+            and "biharskilldevelopmentmission" not in str(r.get("website", "")).lower()
         ]
 
     # Step 3: Split into Government and Private lists and apply ownership filter
@@ -2919,6 +2998,12 @@ def self_check():
             assert not any("BSDM" in str(r.get("university")).upper() for r in res["government"] + res["private"]), "BSDM record found in ITI"
             assert not any("biharskilldevelopmentmission" in str(r.get("email")).lower() for r in res["government"] + res["private"]), "BSDM email found in ITI"
             assert not any("highereducation-bih@nic.in" in str(r.get("email")).lower() for r in res["government"] + res["private"]), "Placeholder email found in ITI"
+            # Verify Live Internet Search & Website Crawler method also enforces exact 149 Govt and 1152 Private ITIs
+            live_res = run_scraper_pipeline({"category": "ITI", "state": "Bihar", "district": "All", "mode": "live"})
+            assert live_res["govt_count"] == 149, f"Live mode expected exactly 149 Govt ITIs, got {live_res['govt_count']}"
+            assert live_res["priv_count"] == 1152, f"Live mode expected exactly 1152 Priv ITIs, got {live_res['priv_count']}"
+            assert not any("BSDM" in str(r.get("university")).upper() for r in live_res["government"] + live_res["private"]), "BSDM record found in live mode ITI"
+            assert not any("biharskilldevelopmentmission" in str(r.get("email")).lower() for r in live_res["government"] + live_res["private"]), "BSDM email found in live mode ITI"
         if cat == "Engineering":
             assert not any("BSDM" in str(r.get("university")).upper() for r in res["private"]), "BSDM record found in Private Engineering"
             assert not any("-220055" in str(r.get("phone")) for r in res["government"]), "Placeholder -220055 found in Govt Engineering phone"
