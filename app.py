@@ -127,6 +127,8 @@ KNOWN_COLLEGE_WEBSITES = {
     "VIDYA EDUCATION GROUP": "https://www.vidyaeducationgroup.in",
     "KALAWATI SNATAK MAHAVIDYALAYA": "https://www.ksmraniganj.org.in",
     "K.K. POLYTECHNIC": "https://www.kkpolytechnic.in",
+    "GANGA MEMORIAL COLLEGE OF POLYTECHNIC": "https://www.gangamemorial.com",
+    "GURUDEO COLLEGE OF TECHNOLOGY AND MANAGEMENT": "https://gctm.co.in",
     "PATNA COLLEGE": "https://www.patnacollege.ac.in",
     "PATNA SCIENCE COLLEGE": "https://www.patnasciencecollege.ac.in",
     "PATNA LAW COLLEGE": "https://www.patnalawcollege.ac.in",
@@ -184,11 +186,28 @@ KNOWN_COLLEGE_WEBSITES = {
     "PATNA MEDICAL COLLEGE": "https://www.pmchpatna.edu.in",
     "PATNA DENTAL COLLEGE": "https://www.patnadentalcollege.org",
     "SRI KRISHNA MEDICAL COLLEGE": "https://www.skmedicalcollege.org",
-    "JAWAHARLAL NEHRU MEDICAL COLLEGE": "https://www.jlmmchbhagalpur.org",
+    "JAWAHARLAL NEHRU MEDICAL COLLEGE": "https://www.jlnmcbgp.org",
+    "JAWAHAR LAL NEHRU MEDICAL COLLEGE": "https://www.jlnmcbgp.org",
     "A.N. MAGADH MEDICAL COLLEGE": "https://www.anmmc.ac.in",
+    "ANUGRAH NARAYAN MAGADH MEDICAL COLLEGE": "https://www.anmmc.ac.in",
     "GOVERNMENT MEDICAL COLLEGE, BETTIAH": "https://www.gmchbettiah.org",
-    "VARDHMAN INSTITUTE OF MEDICAL SCIENCES": "https://www.vimspawapuri.org",
-    "JANNANAYAK KARPOORI THAKUR MEDICAL COLLEGE": "https://www.jnktmchmadhepura.org",
+    "BHAGWAN MAHAVIR INSTITUTE OF MEDICAL SCIENCE": "https://www.bmims.org",
+    "VARDHMAN INSTITUTE OF MEDICAL SCIENCES": "https://www.bmims.org",
+    "JANNAYAK KARPOORI THAKUR MEDICAL COLLEGE": "https://www.jnktmchmadhepura.org",
+    "JANNAYAK KARPURI THAKUR MEDICAL COLLEGE": "https://www.jnktmchmadhepura.org",
+    "GOVERNMENT MEDICAL COLLEGE, PURNEA": "https://www.gmcpurnea.org",
+    "SHRI RAM JANKI MEDICAL COLLEGE": "https://srjmch.bihar.gov.in",
+    "GOVT. DENTAL COLLEGE & HOSPITAL, RAHUI": "https://gdchrahui.ac.in",
+    "GOVERNMENT DENTAL COLLEGE AND HOSPITAL, NALANDA": "https://gdchrahui.ac.in",
+    "GOVERNMENT PHARMACY INSTITUTE": "https://gpipatna.ac.in",
+    "ALL INDIA INSTITUTE OF MEDICAL SCIENCES": "https://www.aiimspatna.org",
+    "AIIMS PATNA": "https://www.aiimspatna.org",
+    "INDIRA GANDHI INSTITUTE OF MEDICAL SCIENCES": "https://www.igims.org",
+    "IGIMS": "https://www.igims.org",
+    "EMPLOYEES STATE INSURANCE CORPORATION MEDICAL COLLEGE": "https://www.esic.gov.in",
+    "ESIC MEDICAL COLLEGE": "https://www.esic.gov.in",
+    "R.B.T.S GOVT. HOMOEO": "https://rbtsmch.org",
+    "PUBLIC HEALTH INSTITUTE, PATNA": "https://health.bihar.gov.in",
     "KATIHAR MEDICAL COLLEGE": "https://www.kmckatihar.org",
     # Engineering Colleges under BEU & AKU
     "BHAGALPUR COLLEGE OF ENGINEERING": "https://www.bcebhagalpur.ac.in",
@@ -493,6 +512,34 @@ KNOWN_COLLEGE_EMAILS = {
     "GOVERNMENT POLYTECHNIC VAISHALI": "gp.vaishali@gmail.com",
     "GOVERNMENT POLYTECHNIC, WEST CHAMPARAN": "gpwestchamparan@gmail.com, fazle.sarwar@yahoo.com",
     "GOVERNMENT POLYTECHNIC WEST CHAMPARAN": "gpwestchamparan@gmail.com, fazle.sarwar@yahoo.com",
+    # Government Medical Colleges
+    "PATNA MEDICAL COLLEGE": "principalsoffice@rediffmail.com, pmchdatacentrepatna@gmail.com",
+    "NALANDA MEDICAL COLLEGE": "nmcpat@yahoo.com, supdt.nmch@gmail.com",
+    "SRI KRISHNA MEDICAL COLLEGE": "dkrsinha@gmail.com, drgkthakur@gmail.com",
+    "DARBHANGA MEDICAL COLLEGE": "principaldmc202@gmail.com, dmchdarbhanga@gmail.com",
+    "JAWAHARLAL NEHRU MEDICAL COLLEGE": "principal.jlnmc@rediffmail.com, superintendentjlnmch@gmail.com",
+    "JAWAHAR LAL NEHRU MEDICAL COLLEGE": "principal.jlnmc@rediffmail.com, superintendentjlnmch@gmail.com",
+    "A.N. MAGADH MEDICAL COLLEGE": "drsp55@rediffmail.com, superintendentgaya@gmail.com",
+    "ANUGRAH NARAYAN MAGADH MEDICAL COLLEGE": "drsp55@rediffmail.com, superintendentgaya@gmail.com",
+    "BHAGWAN MAHAVIR INSTITUTE OF MEDICAL SCIENCE": "principal.vims.pawapuri@gmail.com, superintendentvims.pawapuri@gmail.com",
+    "VARDHMAN INSTITUTE OF MEDICAL SCIENCES": "principal.vims.pawapuri@gmail.com, superintendentvims.pawapuri@gmail.com",
+    "GOVERNMENT MEDICAL COLLEGE, BETTIAH": "gmcbettiah01@gmail.com, gmchbettiah@gmail.com",
+    "JANNAYAK KARPOORI THAKUR MEDICAL COLLEGE": "jnktmchmadhepura@gmail.com, suptd.jnktmch@gmail.com",
+    "JANNAYAK KARPURI THAKUR MEDICAL COLLEGE": "jnktmchmadhepura@gmail.com, suptd.jnktmch@gmail.com",
+    "GOVERNMENT MEDICAL COLLEGE, PURNEA": "govt.mcpurnea@gmail.com, superintendentgmcpurnea@gmail.com",
+    "SHRI RAM JANKI MEDICAL COLLEGE": "srjmch.samastipur@gmail.com",
+    "GOVT. DENTAL COLLEGE & HOSPITAL, RAHUI": "principalgovtdentalcollegerh@gmail.com",
+    "GOVERNMENT DENTAL COLLEGE AND HOSPITAL, NALANDA": "principalgovtdentalcollegerh@gmail.com",
+    "PATNA DENTAL COLLEGE": "pdchpatna@gmail.com",
+    "GOVERNMENT PHARMACY INSTITUTE": "principalgpi@gmail.com",
+    "ALL INDIA INSTITUTE OF MEDICAL SCIENCES": "admin@aiimspatna.org",
+    "AIIMS PATNA": "admin@aiimspatna.org",
+    "INDIRA GANDHI INSTITUTE OF MEDICAL SCIENCES": "director@igims.org",
+    "IGIMS": "director@igims.org",
+    "EMPLOYEES STATE INSURANCE CORPORATION MEDICAL COLLEGE": "dean.bihta@gmail.com",
+    "ESIC MEDICAL COLLEGE": "dean.bihta@gmail.com",
+    "R.B.T.S GOVT. HOMOEO": "rbts1958@gmail.com",
+    "PUBLIC HEALTH INSTITUTE": "phipatna-bih@nic.in",
 }
 
 KNOWN_COLLEGE_PHONES = {
@@ -635,16 +682,33 @@ KNOWN_COLLEGE_PHONES = {
     "D.A.V. P.G. COLLEGE": "06154-222340",
     "PURNEA COLLEGE": "06454-242318",
     "T.P. COLLEGE": "06476-222045",
-    "DARBHANGA MEDICAL COLLEGE": "06272-252024",
-    "NALANDA MEDICAL COLLEGE": "0612-2631159",
-    "PATNA MEDICAL COLLEGE": "0612-2300080",
+    "DARBHANGA MEDICAL COLLEGE": "06272-233158, 9470003252",
+    "NALANDA MEDICAL COLLEGE": "0612-2631159, 9470003568",
+    "PATNA MEDICAL COLLEGE": "0612-2303233, 9470003549",
     "PATNA DENTAL COLLEGE": "0612-2300340",
-    "SRI KRISHNA MEDICAL COLLEGE": "0621-2260177",
-    "JAWAHARLAL NEHRU MEDICAL COLLEGE": "0641-2401078",
-    "A.N. MAGADH MEDICAL COLLEGE": "0631-2410339",
-    "GOVERNMENT MEDICAL COLLEGE, BETTIAH": "06254-240003",
-    "VARDHMAN INSTITUTE OF MEDICAL SCIENCES": "06112-262793",
-    "JANNANAYAK KARPOORI THAKUR MEDICAL COLLEGE": "06476-222040",
+    "SRI KRISHNA MEDICAL COLLEGE": "0621-2230321, 9470003487",
+    "JAWAHARLAL NEHRU MEDICAL COLLEGE": "0641-2409555, 9470003121",
+    "JAWAHAR LAL NEHRU MEDICAL COLLEGE": "0641-2409555, 9470003121",
+    "A.N. MAGADH MEDICAL COLLEGE": "0631-221074, 9470003301",
+    "ANUGRAH NARAYAN MAGADH MEDICAL COLLEGE": "0631-221074, 9470003301",
+    "GOVERNMENT MEDICAL COLLEGE, BETTIAH": "8757890987, 06254-240003",
+    "BHAGWAN MAHAVIR INSTITUTE OF MEDICAL SCIENCE": "9470003131",
+    "VARDHMAN INSTITUTE OF MEDICAL SCIENCES": "9470003131",
+    "JANNAYAK KARPOORI THAKUR MEDICAL COLLEGE": "9835093005",
+    "JANNAYAK KARPURI THAKUR MEDICAL COLLEGE": "9835093005",
+    "GOVERNMENT MEDICAL COLLEGE, PURNEA": "9576711111",
+    "SHRI RAM JANKI MEDICAL COLLEGE": "9470003549",
+    "GOVT. DENTAL COLLEGE & HOSPITAL, RAHUI": "06112-282000",
+    "GOVERNMENT DENTAL COLLEGE AND HOSPITAL, NALANDA": "06112-282000",
+    "GOVERNMENT PHARMACY INSTITUTE": "0612-2371752",
+    "ALL INDIA INSTITUTE OF MEDICAL SCIENCES": "0612-2451000",
+    "AIIMS PATNA": "0612-2451000",
+    "INDIRA GANDHI INSTITUTE OF MEDICAL SCIENCES": "0612-2297099",
+    "IGIMS": "0612-2297099",
+    "EMPLOYEES STATE INSURANCE CORPORATION MEDICAL COLLEGE": "06115-252500",
+    "ESIC MEDICAL COLLEGE": "06115-252500",
+    "R.B.T.S GOVT. HOMOEO": "0621-2260024",
+    "PUBLIC HEALTH INSTITUTE": "0612-2300551",
     "KATIHAR MEDICAL COLLEGE": "06452-239202",
     "CHANAKYA COLLEGE OF HIGHER STUDIES": "7070990871, 7070890872",
     "PRABHU KAILASH INSTITUTE OF MANAGEMENT": "7004840742",
@@ -816,6 +880,24 @@ def load_seed_data():
 
 
 SEED_DATA = load_seed_data()
+
+# Auto-populate KNOWN dictionaries from verified SEED_DATA entries at startup (excluding BSDM portals & generic helplines)
+for _rec in SEED_DATA:
+    if _rec.get("category") in ("BSDM KYP Centers", "Domain Skilling Centres"):
+        continue
+    _name_key = _rec.get("name", "").strip().upper()
+    if not _name_key:
+        continue
+    _w = (_rec.get("website") or "").strip()
+    if _w and "biharskilldevelopmentmission" not in _w.lower() and _name_key not in KNOWN_COLLEGE_WEBSITES:
+        KNOWN_COLLEGE_WEBSITES[_name_key] = _w
+    _em = (_rec.get("email") or "").strip()
+    if _em and not any(k in _em.lower() for k in ("biharskilldevelopmentmission", "helpdesk-dgt", "highereducation-bih@nic.in")) and _name_key not in KNOWN_COLLEGE_EMAILS:
+        KNOWN_COLLEGE_EMAILS[_name_key] = _em
+    _ph = (_rec.get("phone") or "").strip()
+    if _ph and not any(k in _ph for k in ("Helpline", "1800-123-6530", "0612-2215323")) and _name_key not in KNOWN_COLLEGE_PHONES:
+        KNOWN_COLLEGE_PHONES[_name_key] = _ph
+
 
 
 def save_seed_data():
@@ -3027,6 +3109,16 @@ def self_check():
                     assert not is_iti_institution(r.get("name"), r.get("category"), r.get("courses"), r.get("university")), (
                         f"ITI institution leaked into B.Voc & D.Voc {sh_name}: {r.get('name')}"
                     )
+        if cat == "Medical / Nursing / Pharmacy":
+            assert res["govt_count"] == 19, f"Expected exactly 19 Govt Medical colleges, got {res['govt_count']}"
+            for r in res["government"]:
+                assert r.get("phone"), f"Govt Medical college missing phone: {r.get('name')}"
+                assert r.get("email"), f"Govt Medical college missing email: {r.get('name')}"
+                assert r.get("website"), f"Govt Medical college missing website: {r.get('name')}"
+            assert any("Shri Ram Janki" in r.get("name") for r in res["government"]), "Shri Ram Janki Medical College missing from Govt Medical"
+            assert any("Dental College" in r.get("name") and "Rahui" in r.get("name") for r in res["government"]), "GDCH Rahui missing from Govt Medical"
+            assert not any("BSDM" in str(r.get("university")).upper() for r in res["government"] + res["private"]), "BSDM record found in Medical"
+            assert not any("biharskilldevelopmentmission" in str(r.get("email")).lower() for r in res["government"] + res["private"]), "BSDM email found in Medical"
         xlsx = build_excel_bytes(res["government"], res["private"], cat)
         wb = openpyxl.load_workbook(io.BytesIO(xlsx), read_only=True)
         assert wb.sheetnames == ["Government", "Private"]
