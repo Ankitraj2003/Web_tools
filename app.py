@@ -1804,8 +1804,11 @@ def run_scraper_pipeline(params):
                     if t.strip()
                 ]
                 def _matches_token(tok, target_text):
-                    if len(tok) <= 3 or tok in ("B.VOC", "D.VOC", "BVOC", "DVOC"):
+                    if len(tok) <= 3 or tok in ("B.VOC", "D.VOC", "BVOC", "DVOC", "ITI"):
                         return bool(re.search(rf"\b{re.escape(tok)}\b", target_text))
+                    if any(w in tok for w in ("ITI", "INDUSTRIAL TRAINING INSTITUTE")):
+                        if bool(re.search(r"\bITI\b", target_text)) or "INDUSTRIAL TRAINING" in target_text:
+                            return True
                     return tok in target_text
 
                 if any(_matches_token(t, searchable) for t in tokens):
@@ -2051,6 +2054,9 @@ def run_scraper_pipeline(params):
                 r["email"] = ""
             if "biharskilldevelopmentmission" in str(r.get("website", "")).lower():
                 r["website"] = ""
+        if is_target_iti or r.get("category") == "ITI":
+            if "helpdesk-dgt" in str(r.get("email", "")).lower():
+                r["email"] = ""
 
         if not str(r.get("email") or "").strip():
             for k, em in sorted(KNOWN_COLLEGE_EMAILS.items(), key=lambda x: len(x[0]), reverse=True):
@@ -2209,15 +2215,18 @@ def build_excel_bytes(govt_list, priv_list, course_label="Colleges"):
                     phone_val = college_ph
 
             email_str = str(item.get("email") or "").strip()
-            if not any(k in n_up for k in ("BSDM", "KYP", "KUSHAL", "DOMAIN")):
+            if not any(k in n_up for k in ("BSDM", "KYP", "KUSHAL", "DOMAIN")) or course_label == "ITI" or item.get("category") == "ITI":
                 if "biharskilldevelopmentmission" in email_str.lower():
+                    email_str = ""
+            if course_label == "ITI" or item.get("category") == "ITI":
+                if "helpdesk-dgt" in email_str.lower():
                     email_str = ""
             if not email_str:
                 for k, em in sorted(KNOWN_COLLEGE_EMAILS.items(), key=lambda x: len(x[0]), reverse=True):
                     if k in n_up:
                         email_str = em
                         break
-            if not email_str:
+            if not email_str and is_univ_row and course_label != "ITI" and item.get("category") != "ITI":
                 email_str = u_em
 
             dist_str = item.get("district") or "Patna"
@@ -2328,15 +2337,18 @@ def build_csv_bytes(govt_list, priv_list, course_label="Colleges"):
                     phone_val = college_ph
 
             email_str = str(item.get("email") or "").strip()
-            if not any(k in n_up for k in ("BSDM", "KYP", "KUSHAL", "DOMAIN")):
+            if not any(k in n_up for k in ("BSDM", "KYP", "KUSHAL", "DOMAIN")) or course_label == "ITI" or item.get("category") == "ITI":
                 if "biharskilldevelopmentmission" in email_str.lower():
+                    email_str = ""
+            if course_label == "ITI" or item.get("category") == "ITI":
+                if "helpdesk-dgt" in email_str.lower():
                     email_str = ""
             if not email_str:
                 for k, em in sorted(KNOWN_COLLEGE_EMAILS.items(), key=lambda x: len(x[0]), reverse=True):
                     if k in n_up:
                         email_str = em
                         break
-            if not email_str:
+            if not email_str and is_univ_row and course_label != "ITI" and item.get("category") != "ITI":
                 email_str = u_em
 
             dist_str = item.get("district") or "Patna"
@@ -2998,12 +3010,14 @@ def self_check():
             assert not any("BSDM" in str(r.get("university")).upper() for r in res["government"] + res["private"]), "BSDM record found in ITI"
             assert not any("biharskilldevelopmentmission" in str(r.get("email")).lower() for r in res["government"] + res["private"]), "BSDM email found in ITI"
             assert not any("highereducation-bih@nic.in" in str(r.get("email")).lower() for r in res["government"] + res["private"]), "Placeholder email found in ITI"
+            assert not any("helpdesk-dgt" in str(r.get("email")).lower() for r in res["government"] + res["private"]), "DGT central helpdesk email found as college email in ITI"
             # Verify Live Internet Search & Website Crawler method also enforces exact 149 Govt and 1152 Private ITIs
             live_res = run_scraper_pipeline({"category": "ITI", "state": "Bihar", "district": "All", "mode": "live"})
             assert live_res["govt_count"] == 149, f"Live mode expected exactly 149 Govt ITIs, got {live_res['govt_count']}"
             assert live_res["priv_count"] == 1152, f"Live mode expected exactly 1152 Priv ITIs, got {live_res['priv_count']}"
             assert not any("BSDM" in str(r.get("university")).upper() for r in live_res["government"] + live_res["private"]), "BSDM record found in live mode ITI"
             assert not any("biharskilldevelopmentmission" in str(r.get("email")).lower() for r in live_res["government"] + live_res["private"]), "BSDM email found in live mode ITI"
+            assert not any("helpdesk-dgt" in str(r.get("email")).lower() for r in live_res["government"] + live_res["private"]), "DGT central helpdesk email found in live mode ITI"
         if cat == "Engineering":
             assert not any("BSDM" in str(r.get("university")).upper() for r in res["private"]), "BSDM record found in Private Engineering"
             assert not any("-220055" in str(r.get("phone")) for r in res["government"]), "Placeholder -220055 found in Govt Engineering phone"
