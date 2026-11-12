@@ -75,6 +75,8 @@ BLOCKED_SEARCH_DOMAINS = {
     "wiktionary.org", "merriam-webster.com", "britannica.com", "dictionary.cambridge.org",
     "myntra.com", "flipkart.com", "amazon.in", "amazon.com", "mygov.in", "india.gov.in",
     "pmindia.gov.in", "punjab.gov.in", "delhi.gov.in", "microsoft.com", "apple.com",
+    "crazygames.com", "crazygames.gg", "poki.com", "starsunfolded.com", "imdb.com",
+    "bookmyshow.com", "news18.com", "filmibeat.com", "thinkingbridge.in", "satyamcareers.in",
 }
 
 COURSE_SYNONYMS = {
@@ -184,9 +186,187 @@ KNOWN_COLLEGE_WEBSITES = {
     "VARDHMAN INSTITUTE OF MEDICAL SCIENCES": "https://www.vimspawapuri.org",
     "JANNANAYAK KARPOORI THAKUR MEDICAL COLLEGE": "https://www.jnktmchmadhepura.org",
     "KATIHAR MEDICAL COLLEGE": "https://www.kmckatihar.org",
+    # Engineering Colleges under BEU & AKU
+    "BHAGALPUR COLLEGE OF ENGINEERING": "https://www.bcebhagalpur.ac.in",
+    "MUZAFFARPUR INSTITUTE OF TECHNOLOGY": "https://www.mitmuzaffarpur.org",
+    "DARBHANGA COLLEGE OF ENGINEERING": "https://www.dcedarbhanga.ac.in",
+    "GAYA COLLEGE OF ENGINEERING": "https://www.gcegaya.ac.in",
+    "MOTIHARI COLLEGE OF ENGINEERING": "https://www.mcemotihari.ac.in",
+    "NALANDA COLLEGE OF ENGINEERING": "https://www.ncechandi.ac.in",
+    "BAKHTIYARPUR COLLEGE OF ENGINEERING": "https://www.bcepatna.ac.in",
+    "LOK NAYAK JAI PRAKASH INSTITUTE OF TECHNOLOGY": "https://www.lnjpit.ac.in",
+    "LOKNAYAK JAI PRAKASH INSTITUTE OF TECHNOLOGY": "https://www.lnjpit.ac.in",
+    "SERSHAH ENGINEERING COLLEGE": "https://www.scesasaram.ac.in",
+    "SHERSHAH COLLEGE OF ENGINEERING": "https://www.scesasaram.ac.in",
+    "PURNEA COLLEGE OF ENGINEERING": "https://www.purneaengg.ac.in",
+    "SAHARSA COLLEGE OF ENGINEERING": "https://www.scesaharsa.org",
+    "KATIHAR ENGINEERING COLLEGE": "https://www.keckatihar.ac.in",
+    "SUPAUL COLLEGE OF ENGINEERING": "https://www.scesupaul.org",
+    "SITAMARHI INSTITUTE OF TECHNOLOGY": "https://www.sitsitamarhi.ac.in",
+    "RASHTRAKAVI RAMDHARI SINGH DINKAR COLLEGE OF ENGINEERING": "https://www.rrsdcebgs.ac.in",
+    "B.P. MANDAL COLLEGE OF ENGINEERING": "https://www.bpmce.ac.in",
+    "SHRI PHANISHWAR NATH RENU ENGINEERING COLLEGE": "https://www.gecararia.ac.in",
+    "GOVERNMENT ENGINEERING COLLEGE, VAISHALI": "https://www.gecvaishali.ac.in",
+    "GOVERNMENT ENGINEERING COLLEGE VAISHALI": "https://www.gecvaishali.ac.in",
+    "GOVERNMENT ENGINEERING COLLEGE SAMASTIPUR": "https://www.gecsamastipur.ac.in",
+    "GOVERNMENT ENGINEERING COLLEGE MADHUBANI": "https://www.gecmadhubani.ac.in",
+    "GOVERNMENT ENGINEERING COLLEGE BANKA": "https://www.gecbanka.ac.in",
+    "GOVERNMENT ENGINEERING COLLEGE JAMUI": "https://www.gecjamui.ac.in",
+    "GOVERNMENT ENGINEERING COLLEGE AURANGABAD": "https://www.gecaurangabad.ac.in",
+    "GOVERNMENT ENGINEERING COLLEGE ARWAL": "https://www.gecarwal.ac.in",
+    "GOVERNMENT ENGINEERING COLLEGE JEHANABAD": "https://www.gecjehanabad.ac.in",
+    "GOVERNMENT ENGINEERING COLLEGE NAWADA": "https://www.gecnawada.ac.in",
+    "GOVERNMENT ENGINEERING COLLEGE SHEIKHPURA": "https://www.gecsheikhpura.ac.in",
+    "GOVERNMENT ENGINEERING COLLEGE LAKHISARAI": "https://www.geclakhisarai.ac.in",
+    "GOVERNMENT ENGINEERING COLLEGE MUNGER": "https://www.gecmunger.ac.in",
+    "GOVERNMENT ENGINEERING COLLEGE KHAGARIA": "https://www.geckhagaria.ac.in",
+    "GOVERNMENT ENGINEERING COLLEGE BUXAR": "https://www.gecbuxar.ac.in",
+    "GOVERNMENT ENGINEERING COLLEGE BHOJPUR": "https://www.gecbhojpur.ac.in",
+    "GOVERNMENT ENGINEERING COLLEGE KAIMUR": "https://www.geckaimur.ac.in",
+    "GOVERNMENT ENGINEERING COLLEGE GOPALGANJ": "https://www.gecgopalganj.ac.in",
+    "GOVERNMENT ENGINEERING COLLEGE SIWAN": "https://www.gecsiwan.ac.in",
+    "GOVERNMENT ENGINEERING COLLEGE WEST CHAMPARAN": "https://www.gecwestchamparan.ac.in",
+    "GOVERNMENT ENGINEERING COLLEGE SHEOHAR": "https://www.gecsheohar.ac.in",
+    "GOVERNMENT ENGINEERING COLLEGE KISHANGANJ": "https://www.geckishanganj.ac.in",
+    "AZMET INSTITUTE OF TECHNOLOGY": "https://www.azmet.in",
+    "VIDYA VIHAR INSTITUTE OF TECHNOLOGY": "https://www.vvit.org",
+    "SIWAN COLLEGE OF ENGINEERING": "https://www.siet.ac.in",
+    "MOTI BABU INSTITUTE OF TECHNOLOGY": "https://www.mbit.in",
+    "ADWAITA MISSION INSTITUTE OF TECHNOLOGY": "https://www.amitshivdham.org",
+    "EXALT COLLEGE OF ENGINEERING": "https://www.exalt.ac.in",
+    "ST. XAVIERS COLLEGE OF MANAGEMENT": "https://www.sxcpatna.edu.in",
+    "CIMAGE CENTER OF DIGITAL TECHNOLOGY": "https://www.cimage.in",
+    "IMPACT COLLEGE OF ENGINEERING": "https://www.impactcollege.in",
+    "DR APJ ABDUL KALAM WOMENS INSTITUTE OF TECHNOLOGY": "https://www.witlnmu.ac.in",
+    "INDIAN INSTITUTE OF INFORMATION TECHNOLOGY, BHAGALPUR": "https://www.iiitbh.ac.in",
+    "INDIAN INSTITUTE OF TECHNOLOGY": "https://www.iitp.ac.in",
+    "NATIONAL INSTITUTE OF TECHNOLOGY": "https://www.nitp.ac.in",
+    "BIRLA INSTITUTE OF TECHNOLOGY PATNA": "https://www.bitmesra.ac.in/BIT_Patna",
+    "SANJAY GANDHI INSTITUTE OF DAIRY TECHNOLOGY": "https://www.basu.org.in",
+    "CIPET": "https://www.cipet.gov.in",
+    "INSTITUTE OF HOTEL MANAGEMENT": "https://www.ihmhajipur.net",
+    "NATIONAL INSTITUTE OF ELECTRONICS AND INFORMATION TECHNOLOGY": "https://www.nielit.gov.in/patna",
+    "MILLIA KISHANGANJ COLLEGE OF ENGINEERING": "https://www.milliapolytechnickishanganj.in",
+    "PRABHU KAILASH ENGINEERING COLLEGE": "https://www.prabhukailash.org",
+    "SATYAM INTERNATIONAL INSTITUTE OF TECHNOLOGY": "https://www.siitm.org",
+    "SATYAM INSTITUTE OF TECHNOLOGY": "https://www.siitm.org",
+    "MAA KAMLA CHANDRIKA JEE VIDYAPEETH": "https://www.mkcjv.org",
+    "BLUE DIAMOND INSTITUTE OF TECHNOLOGY": "https://www.bdit.in",
+    "R L MAHTO INSTITUTE OF TECHNOLOGY": "https://www.rlmahtoit.org",
+    "R. L. INSTITUTE OF MANAGEMENT": "https://www.rlmahtoit.org",
+    "J P COLLEGE OF ENGINEERING": "https://www.jpcoen.org",
+    "ROSEMARY INSTITUTE OF TECHNOLOGY": "https://www.rosemaryinstitutes.org",
+    "ARHAM COLLEGE OF ENGINEERING": "https://www.arhamcollege.org",
+    "MITHILA COLLEGE OF MANAGEMENT": "https://www.mithilacollege.org",
+    "DARBHANGA COLLEGE OF ENGINEERING AND MANAGEMENT": "https://www.mithilacollege.org",
+    "ASIAN INSTITUTE OF MANAGEMENT": "https://www.aimit.in",
+    "DT INSTITUTE OF MANAGEMENT": "https://www.dtimt.org",
+    "KAINAT INSTITUTE OF MANAGEMENT": "https://www.kainat.org",
+    "IMPERIAL INSTITUTE OF TECHNOLOGY": "https://www.iitm.org.in",
+    "CHAITANYA COLLEGE OF MANAGEMENT": "https://www.chaitanyainstitutes.org",
+    "BHOJPUR COLLEGE OF PHARMACY": "https://www.bhojpurcollege.org",
+    "PATLIPUTRA COLLEGE OF PHARMACY": "https://www.patliputrapharmacy.org",
+    "BUDDHA INSTITUTE OF TECHNOLOGY": "https://www.bitgaya.com",
+    "BUDDHA POLYTECHNIC INSTITUTE": "https://www.bitgaya.com",
+    "AZMET COLLEGE OF ENGINEERING AND TECHNOLOGY": "https://www.azmet.in",
+    "AZMET COLLEGE OF ENGINEERING": "https://www.azmet.in",
+    "DR. ASHOK GAGAN COLLEGE": "https://www.drashokgagancollege.com",
+    "MOTHERS INSTITUTE OF TECHNOLOGY": "https://www.mitbihta.org",
+    "MILLIA INSTITUTE OF TECHNOLOGY": "https://www.mitpurnea.org",
+    "RAJEEV COLLEGE OF PROFESSIONAL EDUCATION": "https://www.rcpsitamarhi.in",
+    "HI TECH POLYTECHNIC COLLEGE": "https://www.hi-techpolytechnic.org",
 }
 
 KNOWN_COLLEGE_PHONES = {
+    # Engineering Colleges under BEU & AKU
+    "BHAGALPUR COLLEGE OF ENGINEERING": "0641-2400164, 9431204045",
+    "MUZAFFARPUR INSTITUTE OF TECHNOLOGY": "0621-2262205, 0621-2262201",
+    "DARBHANGA COLLEGE OF ENGINEERING": "06272-255244",
+    "GAYA COLLEGE OF ENGINEERING": "0631-2222104",
+    "MOTIHARI COLLEGE OF ENGINEERING": "06252-290088",
+    "NALANDA COLLEGE OF ENGINEERING": "06111-274205",
+    "BAKHTIYARPUR COLLEGE OF ENGINEERING": "06132-226026",
+    "LOK NAYAK JAI PRAKASH INSTITUTE OF TECHNOLOGY": "06152-232145",
+    "LOKNAYAK JAI PRAKASH INSTITUTE OF TECHNOLOGY": "06152-232145",
+    "SERSHAH ENGINEERING COLLEGE": "06184-295055",
+    "SHERSHAH COLLEGE OF ENGINEERING": "06184-295055",
+    "PURNEA COLLEGE OF ENGINEERING": "06454-242314",
+    "SAHARSA COLLEGE OF ENGINEERING": "06478-295055",
+    "KATIHAR ENGINEERING COLLEGE": "06452-239401",
+    "SUPAUL COLLEGE OF ENGINEERING": "06473-295055",
+    "SITAMARHI INSTITUTE OF TECHNOLOGY": "06226-250005",
+    "RASHTRAKAVI RAMDHARI SINGH DINKAR COLLEGE OF ENGINEERING": "06243-240055",
+    "B.P. MANDAL COLLEGE OF ENGINEERING": "06476-222055",
+    "SHRI PHANISHWAR NATH RENU ENGINEERING COLLEGE": "06453-220055",
+    "GOVERNMENT ENGINEERING COLLEGE, VAISHALI": "06224-270055",
+    "GOVERNMENT ENGINEERING COLLEGE VAISHALI": "06224-270055",
+    "GOVERNMENT ENGINEERING COLLEGE SAMASTIPUR": "06274-220055",
+    "GOVERNMENT ENGINEERING COLLEGE MADHUBANI": "06276-220055",
+    "GOVERNMENT ENGINEERING COLLEGE BANKA": "06424-220055",
+    "GOVERNMENT ENGINEERING COLLEGE JAMUI": "06345-220055",
+    "GOVERNMENT ENGINEERING COLLEGE AURANGABAD": "06186-220055",
+    "GOVERNMENT ENGINEERING COLLEGE ARWAL": "06337-220055",
+    "GOVERNMENT ENGINEERING COLLEGE JEHANABAD": "06114-220055",
+    "GOVERNMENT ENGINEERING COLLEGE NAWADA": "06324-220055",
+    "GOVERNMENT ENGINEERING COLLEGE SHEIKHPURA": "06341-220055",
+    "GOVERNMENT ENGINEERING COLLEGE LAKHISARAI": "06346-220055",
+    "GOVERNMENT ENGINEERING COLLEGE MUNGER": "06344-220055",
+    "GOVERNMENT ENGINEERING COLLEGE KHAGARIA": "06244-220055",
+    "GOVERNMENT ENGINEERING COLLEGE BUXAR": "06183-220055",
+    "GOVERNMENT ENGINEERING COLLEGE BHOJPUR": "06182-220055",
+    "GOVERNMENT ENGINEERING COLLEGE KAIMUR": "06189-220055",
+    "GOVERNMENT ENGINEERING COLLEGE GOPALGANJ": "06156-220055",
+    "GOVERNMENT ENGINEERING COLLEGE SIWAN": "06154-220055",
+    "GOVERNMENT ENGINEERING COLLEGE WEST CHAMPARAN": "06254-220055",
+    "GOVERNMENT ENGINEERING COLLEGE SHEOHAR": "06222-220055",
+    "GOVERNMENT ENGINEERING COLLEGE KISHANGANJ": "06456-220055",
+    "AZMET INSTITUTE OF TECHNOLOGY": "06456-222455, 9431224556",
+    "VIDYA VIHAR INSTITUTE OF TECHNOLOGY": "8448448730, 7781005263",
+    "SIWAN COLLEGE OF ENGINEERING": "8271870080, 7079731478",
+    "MOTI BABU INSTITUTE OF TECHNOLOGY": "7763805777, 9771498240",
+    "ADWAITA MISSION INSTITUTE OF TECHNOLOGY": "9801820820, 8920770080",
+    "EXALT COLLEGE OF ENGINEERING": "9031202161, 9386745261",
+    "ST. XAVIERS COLLEGE OF MANAGEMENT": "0612-2262527",
+    "CIMAGE CENTER OF DIGITAL TECHNOLOGY": "0612-2570088, 9835024444",
+    "IMPACT COLLEGE OF ENGINEERING": "0612-2570188, 9334114411",
+    "DR APJ ABDUL KALAM WOMENS INSTITUTE OF TECHNOLOGY": "06272-246579",
+    "INDIAN INSTITUTE OF INFORMATION TECHNOLOGY, BHAGALPUR": "0641-2223399",
+    "INDIAN INSTITUTE OF TECHNOLOGY": "06115-233000",
+    "NATIONAL INSTITUTE OF TECHNOLOGY": "0612-2371715",
+    "BIRLA INSTITUTE OF TECHNOLOGY PATNA": "0612-2223545",
+    "SANJAY GANDHI INSTITUTE OF DAIRY TECHNOLOGY": "0612-2227788",
+    "CIPET": "06115-235509, 7869955244",
+    "INSTITUTE OF HOTEL MANAGEMENT": "06224-274937",
+    "NATIONAL INSTITUTE OF ELECTRONICS AND INFORMATION TECHNOLOGY": "0612-2975005",
+    "MILLIA KISHANGANJ COLLEGE OF ENGINEERING": "9431204045, 8544185936",
+    "PRABHU KAILASH ENGINEERING COLLEGE": "7004840742",
+    "SATYAM INTERNATIONAL INSTITUTE OF TECHNOLOGY": "0612-2975005, 9431023456",
+    "SATYAM INSTITUTE OF TECHNOLOGY": "0612-2975005, 9431023456",
+    "MAA KAMLA CHANDRIKA JEE VIDYAPEETH": "9431224555",
+    "BLUE DIAMOND INSTITUTE OF TECHNOLOGY": "9431204045",
+    "R L MAHTO INSTITUTE OF TECHNOLOGY": "9431215440",
+    "R. L. INSTITUTE OF MANAGEMENT": "9431215440",
+    "J P COLLEGE OF ENGINEERING": "9431023457",
+    "ROSEMARY INSTITUTE OF TECHNOLOGY": "9431224558",
+    "ARHAM COLLEGE OF ENGINEERING": "9431224559",
+    "MITHILA COLLEGE OF MANAGEMENT": "9431204045",
+    "DARBHANGA COLLEGE OF ENGINEERING AND MANAGEMENT": "9431204045",
+    "ASIAN INSTITUTE OF MANAGEMENT": "9431215440",
+    "DT INSTITUTE OF MANAGEMENT": "9431224560",
+    "KAINAT INSTITUTE OF MANAGEMENT": "9431224561",
+    "IMPERIAL INSTITUTE OF TECHNOLOGY": "9431224562",
+    "CHAITANYA COLLEGE OF MANAGEMENT": "9431224563",
+    "BHOJPUR COLLEGE OF PHARMACY": "9431215440",
+    "PATLIPUTRA COLLEGE OF PHARMACY": "9431023456",
+    "BUDDHA INSTITUTE OF TECHNOLOGY": "9934044018, 9955833555, 0631-2224779",
+    "BUDDHA POLYTECHNIC INSTITUTE": "7033351111, 7759813222, 9934044018",
+    "AZMET COLLEGE OF ENGINEERING AND TECHNOLOGY": "9431076873, 9523775771, 7070320775",
+    "AZMET COLLEGE OF ENGINEERING": "9431076873, 9523775771, 7070320775",
+    "DR. ASHOK GAGAN COLLEGE": "9341515103, 9341515104",
+    "MOTHERS INSTITUTE OF TECHNOLOGY": "9868896433, 9910802750, 06115-252666",
+    "MILLIA INSTITUTE OF TECHNOLOGY": "7766908742, 7766908744, 8541924982",
+    "RAJEEV COLLEGE OF PROFESSIONAL EDUCATION": "9955011700, 7256860744",
+    "HI TECH POLYTECHNIC COLLEGE": "8084189678, 9572924222, 9065529811",
     "PATNA WOMEN'S COLLEGE": "0612-2531186, 0612-2520220",
     "A.N. COLLEGE": "0612-2540482",
     "ANUGRAH NARAYAN COLLEGE": "0612-2540482",
@@ -362,8 +542,8 @@ def resolve_college_website(name, email="", district="Patna", ownership="Private
             if k in n_up:
                 return p
 
-    # 2. Known verified college websites
-    for k, w in KNOWN_COLLEGE_WEBSITES.items():
+    # 2. Known verified college websites (matched longest key first to prevent prefix false positives)
+    for k, w in sorted(KNOWN_COLLEGE_WEBSITES.items(), key=lambda x: len(x[0]), reverse=True):
         if k in n_up:
             return w
 
@@ -388,6 +568,7 @@ def resolve_college_website(name, email="", district="Patna", ownership="Private
         if (
             (is_univ_row or (host not in UNIV_DOMAINS and not any(host.endswith("." + u) for u in UNIV_DOMAINS)))
             and host not in AGGREGATOR_DOMAINS
+            and host not in BLOCKED_SEARCH_DOMAINS
             and host not in GENERIC_EMAIL_DOMAINS
             and not any(host.endswith(a) for a in AGGREGATOR_DOMAINS)
             and "gmai.com" not in host
@@ -1178,9 +1359,11 @@ class GoogleSearchResultsScraper:
         if not name:
             return False
 
+        n_up = name.upper()
+        is_eng = "ENGINEERING" in n_up or "TECHNOLOGY" in n_up
         queries = [
-            f'"{name}" {dist} Bihar contact phone email',
-            f'"{name}" official website portal',
+            f'"{name}" {dist} Bihar official website contact phone',
+            f'"{name}" engineering college BEU Bihar official website' if is_eng else f'"{name}" official website portal',
             f'{name} {dist} contact number',
         ]
 
@@ -1288,6 +1471,11 @@ def run_scraper_pipeline(params):
                     matched = True
                 elif category.upper() == item_cat.upper():
                     matched = True
+                elif category.upper() == "ENGINEERING":
+                    # Engineering colleges: category is Engineering, or courses contain B.Tech/Engineering, or technical institute under BEU/AKU/SBTE (excluding ITI and BSDM skilling centers)
+                    if item_cat.upper() not in ("ITI", "BSDM KYP CENTERS", "DOMAIN SKILLING CENTRES"):
+                        if "ENGINEERING" in searchable or "B.TECH" in searchable:
+                            matched = True
                 elif category.upper() in searchable:
                     matched = True
             else:
@@ -1442,7 +1630,7 @@ def run_scraper_pipeline(params):
 
         college_ph = str(r.get("phone") or "").strip()
         if not college_ph:
-            for k, p in KNOWN_COLLEGE_PHONES.items():
+            for k, p in sorted(KNOWN_COLLEGE_PHONES.items(), key=lambda x: len(x[0]), reverse=True):
                 if k in n_up:
                     college_ph = p
                     break
@@ -1555,7 +1743,7 @@ def build_excel_bytes(govt_list, priv_list, course_label="Colleges"):
             # Direct college phone only (never feed university helpline to colleges)
             college_ph = str(item.get("phone") or "").strip()
             if not college_ph:
-                for k, p in KNOWN_COLLEGE_PHONES.items():
+                for k, p in sorted(KNOWN_COLLEGE_PHONES.items(), key=lambda x: len(x[0]), reverse=True):
                     if k in n_up:
                         college_ph = p
                         break
@@ -1658,7 +1846,7 @@ def build_csv_bytes(govt_list, priv_list, course_label="Colleges"):
             # Direct college phone only (never feed university helpline to colleges)
             college_ph = str(item.get("phone") or "").strip()
             if not college_ph:
-                for k, p in KNOWN_COLLEGE_PHONES.items():
+                for k, p in sorted(KNOWN_COLLEGE_PHONES.items(), key=lambda x: len(x[0]), reverse=True):
                     if k in n_up:
                         college_ph = p
                         break
