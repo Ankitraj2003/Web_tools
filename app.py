@@ -80,7 +80,7 @@ BLOCKED_SEARCH_DOMAINS = {
 }
 
 COURSE_SYNONYMS = {
-    "B.VOC & D.VOC": ["B.VOC", "BVOC", "BACHELOR OF VOCATION", "D.VOC", "DVOC", "DIPLOMA OF VOCATION", "VOCATIONAL"],
+    "B.VOC & D.VOC": ["B.VOC", "BVOC", "BACHELOR OF VOCATION", "D.VOC", "DVOC", "DIPLOMA OF VOCATION"],
     "POLYTECHNIC": ["POLYTECHNIC", "DIPLOMA IN ENGINEERING", "DIPLOMA ENGINEERING", "SBTE"],
     "ITI": ["ITI", "INDUSTRIAL TRAINING", "NCVT", "SCVT", "CRAFTSMAN TRAINING"],
     "BSDM KYP CENTERS": ["BSDM KYP", "KYP", "KUSHAL YUVA", "BSDM", "BS-CIT", "BS-CLS", "BS-CSS", "BSDC", "SKILL DEVELOPMENT"],
@@ -611,6 +611,37 @@ def save_seed_data():
         print(f"Warning: Failed to save seed_data.json: {e}")
 
 
+def is_bvoc_dvoc_context(label_or_query):
+    """Checks whether the query or category targets B.Voc or D.Voc programs."""
+    s = str(label_or_query or "").upper().strip()
+    return any(
+        k in s
+        for k in ("B.VOC", "BVOC", "BACHELOR OF VOCATION", "D.VOC", "DVOC", "DIPLOMA OF VOCATION")
+    )
+
+
+def is_iti_institution(name="", category="", courses="", university=""):
+    """
+    Determines if an institution is an ITI (Industrial Training Institute) or craftsman
+    training centre under NCVT/SCVT, which does NOT offer university/AICTE B.Voc or D.Voc degrees.
+    """
+    n_up = str(name or "").upper()
+    c_up = str(category or "").upper()
+    crs_up = str(courses or "").upper()
+    u_up = str(university or "").upper()
+    if c_up == "ITI":
+        return True
+    if re.search(r"\b(ITI|I\.T\.I)\b", n_up):
+        return True
+    if any(k in n_up for k in ("INDUSTRIAL TRAINING INSTITUTE", "INDUSTRIAL TRAINING CENTRE", "INDUSTRIAL TRAINING CENTER", "PVT ITI", "PRIVATE ITI", "GOVT ITI", "GOVERNMENT ITI")):
+        return True
+    if any(k in u_up for k in ("NCVT", "SCVT", "NATIONAL COUNCIL FOR VOCATIONAL TRAINING")):
+        return True
+    if crs_up.startswith("TRADES:") or "ITI VOCATIONAL TRADES" in crs_up or "CRAFTSMAN TRAINING" in crs_up:
+        return True
+    return False
+
+
 def update_seed_data_with_live_results(new_or_updated_items):
     """
     Updates the instant database (SEED_DATA and seed_data.json) with newly scraped
@@ -632,6 +663,11 @@ def update_seed_data_with_live_results(new_or_updated_items):
 
     changed_count = 0
     for item in new_or_updated_items:
+        # Guard: Never save an ITI institution under B.Voc & D.Voc category
+        if is_bvoc_dvoc_context(item.get("category")) or is_bvoc_dvoc_context(item.get("courses")):
+            if is_iti_institution(item.get("name"), item.get("category"), item.get("courses"), item.get("university")):
+                continue
+
         code = str(item.get("code") or "").strip().upper()
         name_norm = re.sub(r"[^A-Z0-9]", "", str(item.get("name") or "").upper())
         dist = str(item.get("district") or "").strip().upper()
@@ -912,9 +948,12 @@ def extract_colleges_from_html(html_str, url="", fallback_district="Patna", cour
 
     extracted = []
     seen = set()
+    is_bvoc = is_bvoc_dvoc_context(course_keyword)
 
     # Strategy 0: ITI Directory Dedicated Extractor (https://iti.directory/)
     if "iti.directory" in url:
+        if is_bvoc:
+            return []
         def _iti_field(cls):
             m = re.search(rf"views-field-{cls}[^>]*>(.*?)</div>", html_str, re.DOTALL | re.I)
             if not m:
@@ -1003,12 +1042,16 @@ def extract_colleges_from_html(html_str, url="", fallback_district="Patna", cour
     for h in headings:
         cname = clean_college_name(h)
         if is_valid_college_name(cname):
+            if is_bvoc and is_iti_institution(name=cname):
+                continue
             norm = re.sub(r"[^A-Z0-9]", "", cname.upper())
             if norm not in seen:
                 seen.add(norm)
                 dist = detect_district(cname + " " + full_text[:2000], fallback_district)
                 own = classify_ownership(cname, "", url)
                 univ = infer_university_from_context(cname, full_text, url, course_keyword)
+                if is_bvoc and is_iti_institution(name=cname, university=univ, courses=matched_stream):
+                    continue
                 web = resolve_college_website(cname, default_email, dist, own, "", "LIVE")
                 extracted.append({
                     "code": "LIVE-DIR",
@@ -1029,12 +1072,16 @@ def extract_colleges_from_html(html_str, url="", fallback_district="Patna", cour
     for href, text in links:
         cname = clean_college_name(text)
         if is_valid_college_name(cname):
+            if is_bvoc and is_iti_institution(name=cname):
+                continue
             norm = re.sub(r"[^A-Z0-9]", "", cname.upper())
             if norm not in seen:
                 seen.add(norm)
                 dist = detect_district(cname + " " + href, fallback_district)
                 own = classify_ownership(cname, "", href)
                 univ = infer_university_from_context(cname, full_text, href, course_keyword)
+                if is_bvoc and is_iti_institution(name=cname, university=univ, courses=matched_stream):
+                    continue
                 h_web = ""
                 if href and href.startswith("http"):
                     h_host = href.lower().split("//")[-1].split("/")[0].replace("www.", "")
@@ -1065,12 +1112,16 @@ def extract_colleges_from_html(html_str, url="", fallback_district="Patna", cour
     for cell in table_cells:
         cname = clean_college_name(cell)
         if is_valid_college_name(cname):
+            if is_bvoc and is_iti_institution(name=cname):
+                continue
             norm = re.sub(r"[^A-Z0-9]", "", cname.upper())
             if norm not in seen:
                 seen.add(norm)
                 dist = detect_district(cname + " " + full_text[:2000], fallback_district)
                 own = classify_ownership(cname, "", url)
                 univ = infer_university_from_context(cname, full_text, url, course_keyword)
+                if is_bvoc and is_iti_institution(name=cname, university=univ, courses=matched_stream):
+                    continue
                 web = resolve_college_website(cname, default_email, dist, own, "", "LIVE")
                 extracted.append({
                     "code": "LIVE-TABLE",
@@ -1091,9 +1142,13 @@ def extract_colleges_from_html(html_str, url="", fallback_district="Patna", cour
         title = parser.title or url
         clean_title = clean_college_name(re.sub(r"\s*[\-|–|—|\|].*$", "", title))
         if is_valid_college_name(clean_title) or len(clean_title) > 6:
+            if is_bvoc and is_iti_institution(name=clean_title):
+                return []
             own = classify_ownership(clean_title, full_text, url)
             dist = detect_district(clean_title + " " + full_text[:2000], fallback_district)
             univ = infer_university_from_context(clean_title, full_text, url, course_keyword)
+            if is_bvoc and is_iti_institution(name=clean_title, university=univ, courses=matched_stream):
+                return []
             url_host = url.lower().split("//")[-1].split("/")[0].replace("www.", "")
             url_web = ""
             if (
@@ -1450,6 +1505,7 @@ def run_scraper_pipeline(params):
     custom_urls_raw = (params.get("custom_urls") or "").strip()
 
     effective_course = custom_query if custom_query else category
+    is_target_bvoc = is_bvoc_dvoc_context(category) or is_bvoc_dvoc_context(effective_course)
     results = []
     seen_names = set()
 
@@ -1487,7 +1543,12 @@ def run_scraper_pipeline(params):
                     for t in re.split(r"[,/|]|(?:\bAND\b)|(?:\bOR\b)", custom_query, flags=re.I)
                     if t.strip()
                 ]
-                if any(t in searchable for t in tokens):
+                def _matches_token(tok, target_text):
+                    if len(tok) <= 3 or tok in ("B.VOC", "D.VOC", "BVOC", "DVOC"):
+                        return bool(re.search(rf"\b{re.escape(tok)}\b", target_text))
+                    return tok in target_text
+
+                if any(_matches_token(t, searchable) for t in tokens):
                     if any(t in ("ENGINEERING", "B.TECH", "BTECH", "BE") for t in tokens) and not any(k in custom_query.upper() for k in ("ITI", "BSDM", "KYP", "SKILL")):
                         if item_cat.upper() in ("ITI", "BSDM KYP CENTERS", "DOMAIN SKILLING CENTRES"):
                             matched = False
@@ -1495,6 +1556,11 @@ def run_scraper_pipeline(params):
                             matched = True
                     else:
                         matched = True
+
+            # Strict isolation for B.Voc & D.Voc: Never allow ITI / NCVT / SCVT / BSDM trade centres to leak in
+            if matched and is_target_bvoc:
+                if item_cat.upper() in ("ITI", "BSDM KYP CENTERS", "DOMAIN SKILLING CENTRES") or is_iti_institution(item_name, item_cat, item_courses, item_univ):
+                    matched = False
 
             if not matched:
                 continue
@@ -1533,7 +1599,7 @@ def run_scraper_pipeline(params):
                     if u not in urls_to_crawl:
                         urls_to_crawl.append(u)
 
-            if "ITI" in effective_course.upper():
+            if "ITI" in effective_course.upper() and not is_target_bvoc:
                 iti_candidates = [
                     "https://iti.directory/bihar-iti",
                     "https://iti.directory/bihar-iti/govt-iti",
@@ -1545,7 +1611,7 @@ def run_scraper_pipeline(params):
                     if iu not in urls_to_crawl:
                         urls_to_crawl.append(iu)
 
-            if any(k in effective_course.upper() for k in ("BSDM", "KYP", "DOMAIN", "SKILL")):
+            if any(k in effective_course.upper() for k in ("BSDM", "KYP", "DOMAIN", "SKILL")) and not is_target_bvoc:
                 bsdm_candidates = [
                     "https://www.biharskilldevelopmentmission.in/#/website/find-centers",
                     "https://www.biharskilldevelopmentmission.in/#/website/courses-offered",
@@ -1573,6 +1639,11 @@ def run_scraper_pipeline(params):
                             only_offering=only_offering,
                         )
                         for info in col_list:
+                            if is_target_bvoc and (
+                                info.get("category", "").upper() in ("ITI", "BSDM KYP CENTERS", "DOMAIN SKILLING CENTRES")
+                                or is_iti_institution(info.get("name"), info.get("category"), info.get("courses"), info.get("university"))
+                            ):
+                                continue
                             norm_name = re.sub(r"[^A-Z0-9]", "", info["name"].upper())
                             dedup_key = (info.get("district", "").upper(), info.get("code", "").upper(), norm_name)
                             if norm_name and dedup_key not in seen_names:
@@ -1590,6 +1661,11 @@ def run_scraper_pipeline(params):
                 if state and state.lower() != "all" and item.get("state", "Bihar").lower() != state.lower():
                     continue
                 if district and district.lower() != "all" and item.get("district", "").lower() != district.lower():
+                    continue
+                if is_target_bvoc and (
+                    item.get("category", "").upper() in ("ITI", "BSDM KYP CENTERS", "DOMAIN SKILLING CENTRES")
+                    or is_iti_institution(item.get("name"), item.get("category"), item.get("courses"), item.get("university"))
+                ):
                     continue
                 searchable = f"{item.get('category', '')} {item.get('courses', '')} {item.get('name', '')}".upper()
                 if any(t in searchable for t in tokens):
@@ -1665,6 +1741,16 @@ def run_scraper_pipeline(params):
             r.get("website") or "",
             r.get("code") or "",
         )
+
+    # Strict final safety filter for B.Voc & D.Voc: Ensure 0 ITI trade centers leak into final results
+    if is_target_bvoc:
+        results = [
+            r for r in results
+            if not (
+                r.get("category", "").upper() in ("ITI", "BSDM KYP CENTERS", "DOMAIN SKILLING CENTRES")
+                or is_iti_institution(r.get("name"), r.get("category"), r.get("courses"), r.get("university"))
+            )
+        ]
 
     # Step 3: Split into Government and Private lists and apply ownership filter
     govt_list = [r for r in results if r.get("ownership") == "Government"]
@@ -2513,6 +2599,12 @@ def self_check():
         if cat == "Engineering":
             assert not any("BSDM" in str(r.get("university")).upper() for r in res["private"]), "BSDM record found in Private Engineering"
             assert not any("-220055" in str(r.get("phone")) for r in res["government"]), "Placeholder -220055 found in Govt Engineering phone"
+        if cat == "B.Voc & D.Voc":
+            for sh_name, sh_rows in [("Government", res["government"]), ("Private", res["private"])]:
+                for r in sh_rows:
+                    assert not is_iti_institution(r.get("name"), r.get("category"), r.get("courses"), r.get("university")), (
+                        f"ITI institution leaked into B.Voc & D.Voc {sh_name}: {r.get('name')}"
+                    )
         xlsx = build_excel_bytes(res["government"], res["private"], cat)
         wb = openpyxl.load_workbook(io.BytesIO(xlsx), read_only=True)
         assert wb.sheetnames == ["Government", "Private"]
