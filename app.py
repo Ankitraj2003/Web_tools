@@ -1,3 +1,4 @@
+import base64
 import csv
 import io
 import json
@@ -8,6 +9,13 @@ import urllib.request
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from html.parser import HTMLParser
 from wsgiref.simple_server import make_server
+
+try:
+    import requests
+    import bs4
+except ImportError:
+    requests = None
+    bs4 = None
 
 import openpyxl
 from openpyxl.styles import Alignment, Border, Font, PatternFill, Side
@@ -73,6 +81,8 @@ COURSE_SYNONYMS = {
     "B.VOC & D.VOC": ["B.VOC", "BVOC", "BACHELOR OF VOCATION", "D.VOC", "DVOC", "DIPLOMA OF VOCATION", "VOCATIONAL"],
     "POLYTECHNIC": ["POLYTECHNIC", "DIPLOMA IN ENGINEERING", "DIPLOMA ENGINEERING", "SBTE"],
     "ITI": ["ITI", "INDUSTRIAL TRAINING", "NCVT", "SCVT", "CRAFTSMAN TRAINING"],
+    "BSDM KYP CENTERS": ["BSDM KYP", "KYP", "KUSHAL YUVA", "BSDM", "BS-CIT", "BS-CLS", "BS-CSS", "BSDC", "SKILL DEVELOPMENT"],
+    "DOMAIN SKILLING CENTRES": ["DOMAIN SKILLING", "DOMAIN CENTRE", "DOMAIN", "BSDM", "SKILL TRAINING", "SKILL DEVELOPMENT"],
     "ENGINEERING": ["ENGINEERING", "B.TECH", "BTECH", "B.E.", "M.TECH"],
     "MEDICAL / NURSING / PHARMACY": ["MEDICAL", "MBBS", "NURSING", "GNM", "ANM", "PHARMACY", "B.PHARM", "D.PHARM", "PARAMEDICAL"],
     "MANAGEMENT / BCA / BBA": ["MANAGEMENT", "BBA", "BCA", "BBM", "MBA", "MCA"],
@@ -215,6 +225,90 @@ def load_seed_data():
 
 
 SEED_DATA = load_seed_data()
+
+
+def save_seed_data():
+    """Atomically persists SEED_DATA to seed_data.json."""
+    try:
+        tmp_path = SEED_PATH + ".tmp"
+        with open(tmp_path, "w", encoding="utf-8") as f:
+            json.dump(SEED_DATA, f, ensure_ascii=False, separators=(",", ":"))
+        os.replace(tmp_path, SEED_PATH)
+    except Exception as e:
+        print(f"Warning: Failed to save seed_data.json: {e}")
+
+
+def update_seed_data_with_live_results(new_or_updated_items):
+    """
+    Updates the instant database (SEED_DATA and seed_data.json) with newly scraped
+    or contact-enriched institutions so future queries immediately benefit from live data.
+    """
+    global SEED_DATA
+    if not new_or_updated_items:
+        return 0
+
+    indexed_seed = {}
+    for idx, rec in enumerate(SEED_DATA):
+        code = str(rec.get("code") or "").strip().upper()
+        name_norm = re.sub(r"[^A-Z0-9]", "", str(rec.get("name") or "").upper())
+        dist = str(rec.get("district") or "").strip().upper()
+        if code and code not in ("NCVT-DIR", "LIVE-DIR", "LIVE-WEB", "LIVE-TABLE", "NCVT-PVT", "LIVE-VERIFIED", "LIVE-NEW"):
+            indexed_seed[("code", code)] = idx
+        if name_norm:
+            indexed_seed[("name_dist", name_norm, dist)] = idx
+
+    changed_count = 0
+    for item in new_or_updated_items:
+        code = str(item.get("code") or "").strip().upper()
+        name_norm = re.sub(r"[^A-Z0-9]", "", str(item.get("name") or "").upper())
+        dist = str(item.get("district") or "").strip().upper()
+
+        target_idx = None
+        if code and ("code", code) in indexed_seed:
+            target_idx = indexed_seed[("code", code)]
+        elif ("name_dist", name_norm, dist) in indexed_seed:
+            target_idx = indexed_seed[("name_dist", name_norm, dist)]
+
+        if target_idx is not None:
+            existing = SEED_DATA[target_idx]
+            modified = False
+            for fld in ("phone", "email", "website", "pincode", "courses"):
+                new_val = str(item.get(fld) or "").strip()
+                old_val = str(existing.get(fld) or "").strip()
+                if new_val and not old_val:
+                    existing[fld] = new_val
+                    modified = True
+                elif new_val and old_val and fld in ("phone", "email") and new_val not in old_val:
+                    existing[fld] = f"{old_val}, {new_val}"
+                    modified = True
+            if modified:
+                changed_count += 1
+        else:
+            new_rec = {
+                "code": item.get("code") or "LIVE-NEW",
+                "name": item.get("name") or "",
+                "phone": item.get("phone") or "",
+                "email": item.get("email") or "",
+                "district": item.get("district") or "Patna",
+                "pincode": item.get("pincode") or "",
+                "state": item.get("state") or "Bihar",
+                "university": item.get("university") or "Bihar State Board / University",
+                "website": item.get("website") or "",
+                "courses": item.get("courses") or "Vocational / Technical Courses",
+                "category": item.get("category") or "Live Scraped",
+                "ownership": item.get("ownership") or "Private",
+                "offers_course": True,
+            }
+            SEED_DATA.append(new_rec)
+            if code and code not in ("NCVT-DIR", "LIVE-DIR", "LIVE-WEB", "LIVE-TABLE", "NCVT-PVT", "LIVE-VERIFIED", "LIVE-NEW"):
+                indexed_seed[("code", code)] = len(SEED_DATA) - 1
+            if name_norm:
+                indexed_seed[("name_dist", name_norm, dist)] = len(SEED_DATA) - 1
+            changed_count += 1
+
+    if changed_count > 0:
+        save_seed_data()
+    return changed_count
 
 
 class PageTextAndLinkParser(HTMLParser):
@@ -386,6 +480,7 @@ def infer_university_from_context(title, full_text, url="", course_keyword=""):
         (["BIHAR UNIVERSITY OF HEALTH SCIENCES", "BUHS", "NURSES REGISTRATION", "BNRC"], "Bihar University of Health Sciences (BUHS) / BNRC, Patna"),
         (["POLYTECHNIC", "SBTE", "DIPLOMA IN ENGINEERING"], "State Board of Technical Education (SBTE), Bihar & AICTE"),
         (["INDUSTRIAL TRAINING INSTITUTE", "I.T.I", "ITI ", "NCVT", "SCVT"], "NCVT (DGT, Govt. of India) / SCVT Bihar"),
+        (["BSDM", "KYP", "KUSHAL YUVA", "DOMAIN SKILL", "BIHAR SKILL DEVELOPMENT", "BSDC"], "Bihar Skill Development Mission (BSDM), Govt. of Bihar"),
     ]
     for keys, label in known_mappings:
         if any(k in blob for k in keys):
@@ -725,6 +820,250 @@ def search_web_urls(query, max_results=16):
     return discovered
 
 
+class GoogleSearchResultsScraper:
+    """
+    Python-based Google Search Results Scraper using Requests, BeautifulSoup, and SerpAPI.
+    Supports multi-keyword searching to extract:
+      - Ranking position
+      - Institution / Page Title
+      - Target URL
+      - Description / Snippet
+      - Host Domain
+    Parses search result descriptions, titles, and target pages to automatically fill
+    missing contact numbers, email IDs, and official websites.
+    """
+    def __init__(self, serpapi_key=None):
+        self.serpapi_key = (serpapi_key or os.environ.get("SERPAPI_API_KEY", "")).strip()
+        self.headers = {
+            "User-Agent": USER_AGENT,
+            "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8",
+            "Accept-Language": "en-IN,en-US;q=0.9,en;q=0.8",
+        }
+
+    def search_serpapi(self, query, num=10):
+        if not self.serpapi_key:
+            return []
+        try:
+            if requests is not None:
+                url = "https://serpapi.com/search.json"
+                params = {
+                    "q": query,
+                    "engine": "google",
+                    "api_key": self.serpapi_key,
+                    "hl": "en",
+                    "gl": "in",
+                    "num": num,
+                }
+                resp = requests.get(url, params=params, timeout=10)
+                if resp.status_code == 200:
+                    data = resp.json()
+                    results = []
+                    for idx, r in enumerate(data.get("organic_results", []), start=1):
+                        link = r.get("link") or ""
+                        dom = urllib.parse.urlparse(link).netloc.replace("www.", "")
+                        results.append({
+                            "position": r.get("position", idx),
+                            "title": r.get("title", ""),
+                            "url": link,
+                            "description": r.get("snippet", ""),
+                            "domain": dom,
+                        })
+                    return results
+        except Exception:
+            pass
+        return []
+
+    def search_requests_bs4(self, query, num=10):
+        """Scrapes organic search results via Requests and BeautifulSoup with Google and Bing fallbacks."""
+        results = []
+        seen_urls = set()
+
+        def _add(pos, title, href, desc):
+            if not href or not href.startswith("http") or href in seen_urls:
+                return
+            dom = urllib.parse.urlparse(href).netloc.replace("www.", "")
+            if any(b in dom for b in BLOCKED_SEARCH_DOMAINS):
+                return
+            seen_urls.add(href)
+            results.append({
+                "position": pos or (len(results) + 1),
+                "title": title.strip(),
+                "url": href.strip(),
+                "description": desc.strip(),
+                "domain": dom,
+            })
+
+        # 1. Google HTML Search via Requests & BeautifulSoup
+        if requests is not None and bs4 is not None:
+            try:
+                g_url = f"https://www.google.com/search?q={urllib.parse.quote_plus(query)}&hl=en-IN&gl=in"
+                r = requests.get(g_url, headers=self.headers, timeout=8)
+                if r.status_code == 200:
+                    soup = bs4.BeautifulSoup(r.text, "html.parser")
+                    for a in soup.find_all("a", href=True):
+                        h = a["href"]
+                        if "/url?q=" in h:
+                            raw_u = h.split("/url?q=")[1].split("&")[0]
+                            dec_u = urllib.parse.unquote(raw_u)
+                            title = a.get_text(" ", strip=True)
+                            parent = a.find_parent("div")
+                            desc = parent.get_text(" ", strip=True) if parent else ""
+                            if dec_u.startswith("http") and "google.com" not in dec_u and len(title) > 3:
+                                _add(len(results) + 1, title, dec_u, desc)
+                                if len(results) >= num:
+                                    break
+            except Exception:
+                pass
+
+        # 2. Bing Search fallback via Requests & BeautifulSoup
+        if len(results) < num and requests is not None and bs4 is not None:
+            try:
+                b_url = f"https://www.bing.com/search?q={urllib.parse.quote_plus(query)}"
+                r = requests.get(b_url, headers=self.headers, timeout=8)
+                if r.status_code == 200:
+                    soup = bs4.BeautifulSoup(r.text, "html.parser")
+                    for pos, li in enumerate(soup.select("li.b_algo"), start=len(results) + 1):
+                        h2_a = li.select_one("h2 a")
+                        if not h2_a or not h2_a.get("href"):
+                            continue
+                        href = h2_a["href"]
+                        if "bing.com/ck/a?" in href and "u=a1" in href:
+                            try:
+                                m = re.search(r"[?&]u=a1([^&]+)", href)
+                                if m:
+                                    raw = m.group(1)
+                                    pad = (4 - len(raw) % 4) % 4
+                                    href = base64.urlsafe_b64decode(raw + "=" * pad).decode("utf-8", errors="ignore")
+                            except Exception:
+                                pass
+                        title = h2_a.get_text(" ", strip=True)
+                        snip_el = li.select_one(".b_caption p, .b_algoSlug, p")
+                        desc = snip_el.get_text(" ", strip=True) if snip_el else ""
+                        _add(pos, title, href, desc)
+                        if len(results) >= num:
+                            break
+            except Exception:
+                pass
+
+        # 3. Standard fallback using search_web_urls
+        if len(results) < num:
+            for u in search_web_urls(query, max_results=num - len(results)):
+                _add(len(results) + 1, query, u, "")
+
+        return results
+
+    def search(self, query, num=10):
+        if self.serpapi_key:
+            res = self.search_serpapi(query, num=num)
+            if res:
+                return res
+        return self.search_requests_bs4(query, num=num)
+
+    def extract_contacts(self, text):
+        phones = []
+        for p in PHONE_RE.findall(text):
+            p_clean = p.strip(" ,.-")
+            if p_clean and "0612-2215323" not in p_clean and p_clean not in phones:
+                phones.append(p_clean)
+        emails = []
+        for e in EMAIL_RE.findall(text):
+            el = e.lower().strip(" ,.;:")
+            if (
+                "@" in el
+                and "." in el.split("@")[-1]
+                and el != "highereducation-bih@nic.in"
+                and not el.endswith((".png", ".jpg", ".jpeg", ".gif", ".svg", ".webp", ".css", ".js"))
+                and el not in emails
+            ):
+                emails.append(el)
+        return phones, emails
+
+    def enrich_institution(self, inst):
+        """
+        Executes multi-keyword search to extract ranking positions, titles, URLs,
+        descriptions, and domains, and fills empty phone, email, or website.
+        """
+        name = inst.get("name") or ""
+        dist = inst.get("district") or ""
+        if not name:
+            return False
+
+        queries = [
+            f'"{name}" {dist} Bihar contact phone email',
+            f'"{name}" official website portal',
+            f'{name} {dist} contact number',
+        ]
+
+        found_phones = []
+        found_emails = []
+        found_web = inst.get("website") or ""
+        search_meta = []
+
+        for q in queries:
+            s_results = self.search(q, num=5)
+            for r in s_results:
+                search_meta.append(r)
+                blob = f"{r.get('title', '')} {r.get('description', '')}"
+                ph_list, em_list = self.extract_contacts(blob)
+                for ph in ph_list:
+                    if ph not in found_phones:
+                        found_phones.append(ph)
+                for em in em_list:
+                    if em not in found_emails:
+                        found_emails.append(em)
+
+                if not found_web:
+                    href = r.get("url") or ""
+                    resolved = resolve_college_website(name, cur_web=href, district=dist)
+                    if resolved:
+                        found_web = resolved
+
+            if found_phones and found_emails and found_web:
+                break
+
+        # If still missing contact, fetch top candidate page via requests + BeautifulSoup
+        if (not found_phones or not found_emails) and search_meta and requests is not None and bs4 is not None:
+            try:
+                for r in search_meta[:2]:
+                    u = r.get("url") or ""
+                    if not u or any(b in u for b in BLOCKED_SEARCH_DOMAINS) or any(a in u for a in AGGREGATOR_DOMAINS):
+                        continue
+                    resp = requests.get(u, headers=self.headers, timeout=6)
+                    if resp.status_code == 200:
+                        soup = bs4.BeautifulSoup(resp.text, "html.parser")
+                        ph_list, em_list = self.extract_contacts(soup.get_text(" ", strip=True))
+                        for ph in ph_list:
+                            if ph not in found_phones:
+                                found_phones.append(ph)
+                        for em in em_list:
+                            if em not in found_emails:
+                                found_emails.append(em)
+                        if not found_web:
+                            res_w = resolve_college_website(name, cur_web=u, district=dist)
+                            if res_w:
+                                found_web = res_w
+                    if found_phones and found_emails:
+                        break
+            except Exception:
+                pass
+
+        updated = False
+        if not inst.get("phone") and found_phones:
+            inst["phone"] = ", ".join(found_phones[:2])
+            updated = True
+        if not inst.get("email") and found_emails:
+            inst["email"] = ", ".join(found_emails[:2])
+            updated = True
+        if not inst.get("website") and found_web:
+            inst["website"] = found_web
+            updated = True
+
+        if search_meta and "search_results" not in inst:
+            inst["search_results"] = search_meta[:5]
+
+        return updated
+
+
 def run_scraper_pipeline(params):
     category = (params.get("category") or "B.Voc & D.Voc").strip()
     custom_query = (params.get("custom_query") or "").strip()
@@ -820,6 +1159,16 @@ def run_scraper_pipeline(params):
                     if iu not in urls_to_crawl:
                         urls_to_crawl.append(iu)
 
+            if any(k in effective_course.upper() for k in ("BSDM", "KYP", "DOMAIN", "SKILL")):
+                bsdm_candidates = [
+                    "https://www.biharskilldevelopmentmission.in/#/website/find-centers",
+                    "https://www.biharskilldevelopmentmission.in/#/website/courses-offered",
+                    "https://www.biharskilldevelopmentmission.in/",
+                ]
+                for bu in bsdm_candidates:
+                    if bu not in urls_to_crawl:
+                        urls_to_crawl.append(bu)
+
         if urls_to_crawl:
             fallback_dist = "Patna" if district.lower() == "all" else district
             with ThreadPoolExecutor(max_workers=10) as pool:
@@ -866,6 +1215,30 @@ def run_scraper_pipeline(params):
                         copy_item["code"] = "LIVE-VERIFIED"
                         results.append(copy_item)
                         live_scraped_count += 1
+
+    enrich_contacts = bool(params.get("enrich_contacts", True))
+    serpapi_key = (params.get("serpapi_key") or "").strip()
+
+    # Step 2.5: Auto-fill empty phone / email using Python-based Google Search Results Scraper
+    if enrich_contacts and results and mode in ("hybrid", "live"):
+        missing_contact_items = [
+            r for r in results
+            if not str(r.get("phone") or "").strip() or not str(r.get("email") or "").strip()
+        ]
+        if missing_contact_items:
+            scraper = GoogleSearchResultsScraper(serpapi_key=serpapi_key)
+            with ThreadPoolExecutor(max_workers=5) as pool:
+                fut_map = {pool.submit(scraper.enrich_institution, it): it for it in missing_contact_items[:15]}
+                for fut in as_completed(fut_map):
+                    try:
+                        fut.result()
+                    except Exception:
+                        pass
+            update_seed_data_with_live_results(missing_contact_items[:15])
+
+    # Persist live scraped colleges / updates to instant database
+    if live_scraped_count > 0:
+        update_seed_data_with_live_results(results)
 
     # Step 3: Split into Government and Private lists and apply ownership filter
     govt_list = [r for r in results if r.get("ownership") == "Government"]
@@ -1241,6 +1614,8 @@ DASHBOARD_HTML = """<!DOCTYPE html>
           <option value="B.Voc & D.Voc">B.Voc & D.Voc Colleges</option>
           <option value="Polytechnic">Polytechnic Colleges</option>
           <option value="ITI">ITI Colleges (NCVT / SCVT)</option>
+          <option value="BSDM KYP Centers">BSDM KYP Centers (Kushal Yuva Program)</option>
+          <option value="Domain Skilling Centres">Domain Skilling Centres (BSDM)</option>
           <option value="Engineering">Engineering Colleges (B.Tech / M.Tech)</option>
           <option value="Medical / Nursing / Pharmacy">Medical, Nursing & Pharmacy Colleges</option>
           <option value="Management / BCA / BBA">Management / BCA / BBA Colleges</option>
@@ -1303,10 +1678,21 @@ DASHBOARD_HTML = """<!DOCTYPE html>
       <textarea id="custom_urls" placeholder="https://www.cmsc.ac.in, https://sijoul.sandipuniversity.edu.in ... (Leave blank to search automatically)"></textarea>
     </div>
 
-    <label class="checkbox-row">
-      <input type="checkbox" id="only_offering" checked />
-      Exclude colleges that do NOT offer the selected course (Only include colleges offering this course in the Excel sheets)
-    </label>
+    <div style="display: flex; flex-wrap: wrap; gap: 1.5rem; align-items: center; margin-top: 0.85rem;">
+      <label class="checkbox-row" style="margin-top:0;">
+        <input type="checkbox" id="only_offering" checked />
+        Exclude institutions that do NOT offer the selected course
+      </label>
+      <label class="checkbox-row" style="margin-top:0;">
+        <input type="checkbox" id="enrich_contacts" checked />
+        Auto-enrich empty Phone/Email via Google Search Scraper (Requests, BeautifulSoup &amp; SerpAPI)
+      </label>
+    </div>
+
+    <div class="field" style="margin-top: 0.85rem; max-width: 520px;">
+      <label for="serpapi_key">SerpAPI Key (Optional — left blank uses Requests &amp; BeautifulSoup Google/Bing Scraper)</label>
+      <input type="text" id="serpapi_key" placeholder="Enter SerpAPI Key if available (Optional)" />
+    </div>
 
     <div class="actions">
       <button class="btn-primary" id="btnScrape" onclick="runScrape()">1. Scrape & Collect Data</button>
@@ -1380,7 +1766,9 @@ function getFormPayload() {
     ownership: document.getElementById('ownership').value,
     mode: document.getElementById('mode').value,
     custom_urls: document.getElementById('custom_urls').value,
-    only_offering: document.getElementById('only_offering').checked
+    only_offering: document.getElementById('only_offering').checked,
+    enrich_contacts: document.getElementById('enrich_contacts') ? document.getElementById('enrich_contacts').checked : true,
+    serpapi_key: document.getElementById('serpapi_key') ? document.getElementById('serpapi_key').value.trim() : ''
   };
 }
 
@@ -1616,7 +2004,7 @@ def app(environ, start_response):
 
 def self_check():
     """Assert-based self-check verifying scraper pipeline, Excel generation, and WSGI routes."""
-    assert len(SEED_DATA) >= 2550, f"Expected >=2550 seed records, got {len(SEED_DATA)}"
+    assert len(SEED_DATA) >= 6000, f"Expected >=6000 seed records, got {len(SEED_DATA)}"
     for rec in SEED_DATA:
         for k in ("code", "name", "district", "university", "courses"):
             val = str(rec.get(k) or "").strip()
@@ -1640,12 +2028,14 @@ def self_check():
     for cat, min_gov, min_priv in [
         ("Polytechnic", 50, 89),
         ("ITI", 118, 1150),
+        ("BSDM KYP Centers", 600, 1100),
+        ("Domain Skilling Centres", 200, 1900),
         ("B.Voc & D.Voc", 29, 17),
         ("Engineering", 35, 30),
         ("Medical / Nursing / Pharmacy", 15, 150),
         ("Management / BCA / BBA", 1, 20),
         ("Graduation / PG / Degree", 300, 400),
-        ("All", 550, 1950),
+        ("All", 1200, 4000),
     ]:
         res = run_scraper_pipeline({"category": cat, "state": "Bihar", "district": "All", "mode": "verified"})
         assert res["govt_count"] >= min_gov, f"{cat} govt count too low: {res['govt_count']}"
@@ -1713,6 +2103,28 @@ def self_check():
     )
     assert statuses[-1] == "200 OK" and len(csv_export_body) > 2000
     assert b"Name of the College / University" in csv_export_body
+
+    # Verify GoogleSearchResultsScraper extraction & seed data live updating
+    test_scraper = GoogleSearchResultsScraper()
+    test_ph, test_em = test_scraper.extract_contacts("Inquiry: Call 9876543210 or 0612-2567333 email contact@biharcolleges.org")
+    assert any("9876543210" in p or "0612-2567333" in p for p in test_ph)
+    assert "contact@biharcolleges.org" in test_em
+
+    test_item = {
+        "code": "TEST-SELFCHECK-001",
+        "name": "Self Check Test SDC",
+        "phone": "9876543210",
+        "email": "test@biharskilldevelopmentmission.in",
+        "district": "Patna",
+        "pincode": "800001",
+        "courses": "Skill Training Test",
+        "category": "Live Scraped"
+    }
+    updated_cnt = update_seed_data_with_live_results([test_item])
+    assert updated_cnt >= 1
+    # Cleanup self-check dummy item
+    SEED_DATA[:] = [x for x in SEED_DATA if x.get("code") != "TEST-SELFCHECK-001"]
+    save_seed_data()
 
     print("SELF-CHECK PASSED: All WSGI routes (/, /health, /api/scrape, /api/export, /api/export_csv), categories, and exports verified.")
 
