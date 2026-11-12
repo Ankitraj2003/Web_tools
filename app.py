@@ -276,6 +276,219 @@ KNOWN_COLLEGE_WEBSITES = {
     "MILLIA INSTITUTE OF TECHNOLOGY": "https://www.mitpurnea.org",
     "RAJEEV COLLEGE OF PROFESSIONAL EDUCATION": "https://www.rcpsitamarhi.in",
     "HI TECH POLYTECHNIC COLLEGE": "https://www.hi-techpolytechnic.org",
+    # Government Polytechnic Colleges in Bihar under SBTE / DSTTE
+    "GOVERNMENT POLYTECHNIC, ARARIA": "https://www.gpararia.org",
+    "GOVERNMENT POLYTECHNIC ARARIA": "https://www.gpararia.org",
+    "GOVERNMENT POLYTECHNIC, ARWAL": "https://www.gparwal.org.in",
+    "GOVERNMENT POLYTECHNIC ARWAL": "https://www.gparwal.org.in",
+    "GOVERNMENT POLYTECHNIC, AURANGABAD": "https://www.gpaurangabad.ac.in",
+    "GOVT. POLYTECHNIC, AURANGABAD": "https://www.gpaurangabad.ac.in",
+    "GOVERNMENT POLYTECHNIC AURANGABAD": "https://www.gpaurangabad.ac.in",
+    "GOVERNMENT POLYTECHNIC, BANKA": "https://www.gpbanka.ac.in",
+    "GOVERNMENT POLYTECHNIC BANKA": "https://www.gpbanka.ac.in",
+    "GOVERNMENT POLYTECHNIC BARAUNI": "https://www.gpbarauni.ac.in",
+    "GOVERNMENT POLYTECHNIC, BARAUNI": "https://www.gpbarauni.ac.in",
+    "GOVERNMENT POLYTECHNIC OF TEXTILE TECHNOLOGY, BHAGALPUR": "https://www.gpttbhagalpur.co.in",
+    "GOVERNMENT POLYTECHNIC, BHAGALPUR": "https://www.gpbgp.org",
+    "GOVERNMENT POLYTECHNIC BHAGALPUR": "https://www.gpbgp.org",
+    "GOVT. POLYTECHNIC, BHOJPUR": "https://www.gpbhojpur.org.in",
+    "GOVERNMENT POLYTECHNIC, BHOJPUR": "https://www.gpbhojpur.org.in",
+    "GOVERNMENT POLYTECHNIC BHOJPUR": "https://www.gpbhojpur.org.in",
+    "GOVERNMENT POLYTECHNIC BUXAR": "https://www.gpbuxar.ac.in",
+    "GOVERNMENT POLYTECHNIC, BUXAR": "https://www.gpbuxar.ac.in",
+    "GOVERNMENT POLYTECHNIC, DARBHANGA": "https://www.gpdarbhanga.org.in",
+    "GOVERNMENT POLYTECHNIC DARBHANGA": "https://www.gpdarbhanga.org.in",
+    "GOVERNMENT POLYTECHNIC, MOTIHARI": "https://www.gpmotihari.org.in",
+    "GOVERNMENT POLYTECHNIC MOTIHARI": "https://www.gpmotihari.org.in",
+    "GOVERNMENT POLYTECHNIC, GAYA": "https://gpgaya.org",
+    "GOVT. POLYTECHNIC, GAYA": "https://gpgaya.org",
+    "GOVERNMENT POLYTECHNIC GAYA": "https://gpgaya.org",
+    "GOVERNMENT POLYTECHNIC, TEKARI, GAYA": "https://www.gptekari.org",
+    "GOVERNMENT POLYTECHNIC, TEKARI": "https://www.gptekari.org",
+    "GOVT. POLYTECHNIC TEKARI, GAYA": "https://www.gptekari.org",
+    "BRAJ KISHOR NARAYAN SINGH GOVT. POLYTECHNIC, GOPALGANJ": "https://www.bknsgpgopalganj.org.in",
+    "B.K.N.S. GOVERNMENT POLYTECHNIC, GOPALGANJ": "https://www.bknsgpgopalganj.org.in",
+    "BKNS GOVT. POLYTECHNIC, GOPALGANJ": "https://www.bknsgpgopalganj.org.in",
+    "GOVERNMENT POLYTECHNIC GOPALGANJ": "https://www.gpgopalganj.ac.in",
+    "GOVERNMENT POLYTECHNIC, GOPALGANJ": "https://www.gpgopalganj.ac.in",
+    "GOVERNMENT POLYTECHNIC JAMUI": "https://www.gpjamui.org",
+    "GOVERNMENT POLYTECHNIC, JAMUI": "https://www.gpjamui.org",
+    "GOVT. POLYTECHNIC, JEHANABAD": "https://www.gpj.org.in",
+    "GOVERNMENT POLYTECHNIC, JEHANABAD": "https://www.gpj.org.in",
+    "GOVERNMENT POLYTECHNIC JEHANABAD": "https://www.gpj.org.in",
+    "GOVERNMENT POLYTECHNIC, KAIMUR": "https://gpkaimur.ac.in",
+    "GOVERNMENT POLYTECHNIC KAIMUR": "https://gpkaimur.ac.in",
+    "GOVERNMENT POLYTECHNIC KATIHAR": "https://gpkatihar.ac.in",
+    "GOVERNMENT POLYTECHNIC, KATIHAR": "https://gpkatihar.ac.in",
+    "GOVT. POLYTECHNIC, KAGARIA": "https://www.gpkhagaria.ac.in",
+    "GOVERNMENT POLYTECHNIC, KHAGARIA": "https://www.gpkhagaria.ac.in",
+    "GOVERNMENT POLYTECHNIC KHAGARIA": "https://www.gpkhagaria.ac.in",
+    "GOVERNMENT POLYTECHNIC, KISHANGANJ": "https://gpkishanganj.ac.in",
+    "GOVERNMENT POLYTECHNIC KISHANGANJ": "https://gpkishanganj.ac.in",
+    "GOVERNMENT POLYTECHNIC LAKHISARAI": "https://www.gplakhisarai.in",
+    "GOVERNMENT POLYTECHNIC, LAKHISARAI": "https://www.gplakhisarai.in",
+    "GOVERMENT POLYTECHNIC MADHEPURA": "https://www.gpmadhepura.edu.in",
+    "GOVERNMENT POLYTECHNIC, MADHEPURA": "https://www.gpmadhepura.edu.in",
+    "GOVERNMENT POLYTECHNIC MADHEPURA": "https://www.gpmadhepura.edu.in",
+    "GOVERNMENT POLYTECHNIC, MADHUBANI": "https://www.gpmadhubani.ac.in",
+    "GOVERNMENT POLYTECHNIC MADHUBANI": "https://www.gpmadhubani.ac.in",
+    "GOVERNMENT POLYTECHNIC, MUNGER": "https://www.gpmunger.ac.in",
+    "GOVERNMENT POLYTECHNIC MUNGER": "https://www.gpmunger.ac.in",
+    "GOVERNMENT POLYTECHNIC, MUZAFFARPUR": "https://www.gpmuz.ac.in",
+    "GOVERNMENT POLYTECHNIC MUZAFFARPUR": "https://www.gpmuz.ac.in",
+    "GOVERNMENT WOMENS POLYTECHNIC, MUZAFFARPUR": "https://www.gwpmuz.in",
+    "GOVT. WOMENS POLYTECHNIC, MUZAFFARPUR": "https://www.gwpmuz.in",
+    "GOVT. WOMENS POLYTECHNIC,MUZAFFARPUR": "https://www.gwpmuz.in",
+    "GOVERNMENT POLYTECHNIC ASTHAWAN,NALANDA": "https://www.gpasthawannalanda.org.in",
+    "GOVERNMENT POLYTECHNIC, ASTHAWAN, NALANDA": "https://www.gpasthawannalanda.org.in",
+    "GOVERNMENT POLYTECHNIC ASTHAWAN NALANDA": "https://www.gpasthawannalanda.org.in",
+    "GOVERNMENT POLYTECHNIC, NAWADA": "https://www.gpnawada.org",
+    "GOVERNMENT POLYTECHNIC NAWADA": "https://www.gpnawada.org",
+    "GOVERNMENT POLYTECHNIC, BARH": "https://www.gpbarh.in",
+    "GOVERNMENT POLYTECHNIC BARH": "https://www.gpbarh.in",
+    "GOVERNMENT POLYTECHNIC, PATNA": "https://www.gpp7.org.in",
+    "GOVERNMENT POLYTECHNIC PATNA": "https://www.gpp7.org.in",
+    "GOVERNMENT POLYTECHNIC, GULZARBAGH, PATNA": "https://www.gpp7.org.in",
+    "GOVERNMENT WOMAN POLYTECHNIC,PATNA": "https://www.gwpp.ac.in",
+    "GOVERNMENT WOMEN POLYTECHNIC, PATNA": "https://www.gwpp.ac.in",
+    "GOVT. WOMENS POLYTECHNIC,PATNA": "https://www.gwpp.ac.in",
+    "NEW GOVERNMENT POLYTECHNIC, PATNA": "https://www.ngpp.ac.in",
+    "NEW GOVERNMENT POLYTECHNIC, PATLIPUTRA": "https://www.ngpp.ac.in",
+    "NEW GOVT. POLYTECHNIC, PATNA-13": "https://www.ngpp.ac.in",
+    "TOOL ROOM AND TRAINING CENTER": "https://www.trtcpatna.org",
+    "GOVERNMENT POLYTECHNIC, PURNEA": "https://www.gppurnea.org",
+    "GOVERNMENT POLYTECHNIC PURNEA": "https://www.gppurnea.org",
+    "GOVERNMENT POLYTECHNIC, DEHRI ON SONE": "https://www.gpdehrionsone.ac.in",
+    "GOVERNMENT POLYTECHNIC DEHRI ON SONE": "https://www.gpdehrionsone.ac.in",
+    "GOVERNMENT POLYTECHNIC, SAHARSA": "https://www.gpshc.ac.in",
+    "GOVERNMENT POLYTECHNIC SAHARSA": "https://www.gpshc.ac.in",
+    "KAMESHWAR NARAYAN SINGH GOVERNMENT POLYTECHNIC SAMASTIPUR": "https://www.knsgpsamastipur.ac.in",
+    "K.N.S. GOVERNMENT POLYTECHNIC, SAMASTIPUR": "https://www.knsgpsamastipur.ac.in",
+    "GOVERNMENT POLYTECHNIC CHAPRA": "https://www.gpchhapra.org.in",
+    "GOVERNMENT POLYTECHNIC, CHAPRA": "https://www.gpchhapra.org.in",
+    "GOVERNMENT POLYTECHNIC, SHEIKHPURA": "https://www.gpsheikhpura.in",
+    "GOVERNMENT POLYTECHNIC SHEIKHPURA": "https://www.gpsheikhpura.in",
+    "GOVERNMENT POLYTECHNIC SHEOHAR": "https://www.gpsheohar.ac.in",
+    "GOVERNMENT POLYTECHNIC, SHEOHAR": "https://www.gpsheohar.ac.in",
+    "BADDIUZAMA KHAN POLYTECHNIC INTITUTE, SITAMARHI": "https://www.bkpipuprisitamarhi.com",
+    "GOVERNMENT POLYTECHNIC, SITAMARHI": "https://www.gpsitamarhi.in",
+    "GOVERNMENT POLYTECHNIC SITAMARHI": "https://www.gpsitamarhi.in",
+    "GOVERNMENT POLYTECHNIC, SIWAN": "https://gpsiwan.org",
+    "GOVERNMENT POLYTECHNIC SIWAN": "https://gpsiwan.org",
+    "GOVERNMENT POLYTECHNIC, RAGHOPUR, SUPAUL": "https://www.gpraghopur.org.in",
+    "GOVERNMENT POLYTECHNIC RAGHOPUR SUPAUL": "https://www.gpraghopur.org.in",
+    "GOVERNMENT POLYTECHNIC, VAISHALI": "https://www.gpvaishali.org",
+    "GOVERNMENT POLYTECHNIC VAISHALI": "https://www.gpvaishali.org",
+    "GOVERNMENT POLYTECHNIC, WEST CHAMPARAN": "https://www.gpwestchamparan.org.in",
+    "GOVERNMENT POLYTECHNIC WEST CHAMPARAN": "https://www.gpwestchamparan.org.in",
+}
+
+KNOWN_COLLEGE_EMAILS = {
+    # Government Polytechnic Colleges in Bihar under SBTE / DSTTE - verified from portals
+    "GOVERNMENT POLYTECHNIC, ARARIA": "principalgpararia@gmail.com",
+    "GOVERNMENT POLYTECHNIC ARARIA": "principalgpararia@gmail.com",
+    "GOVERNMENT POLYTECHNIC, ARWAL": "principalgparwal@gmail.com",
+    "GOVERNMENT POLYTECHNIC ARWAL": "principalgparwal@gmail.com",
+    "GOVERNMENT POLYTECHNIC, AURANGABAD": "principalpolyaurangabad@gmail.com",
+    "GOVT. POLYTECHNIC, AURANGABAD": "principalpolyaurangabad@gmail.com",
+    "GOVERNMENT POLYTECHNIC AURANGABAD": "principalpolyaurangabad@gmail.com",
+    "GOVERNMENT POLYTECHNIC, BANKA": "principalbankapolytech28@gmail.com, gpbanka2016@gmail.com",
+    "GOVERNMENT POLYTECHNIC BANKA": "principalbankapolytech28@gmail.com, gpbanka2016@gmail.com",
+    "GOVERNMENT POLYTECHNIC BARAUNI": "polytechnic_bgs@yahoo.co.in",
+    "GOVERNMENT POLYTECHNIC, BARAUNI": "polytechnic_bgs@yahoo.co.in",
+    "GOVERNMENT POLYTECHNIC OF TEXTILE TECHNOLOGY, BHAGALPUR": "gpresambgp@gmail.com",
+    "GOVERNMENT POLYTECHNIC, BHAGALPUR": "bhag.gp@gmail.com",
+    "GOVERNMENT POLYTECHNIC BHAGALPUR": "bhag.gp@gmail.com",
+    "GOVT. POLYTECHNIC, BHOJPUR": "principalgpbhojpur@gmail.com, gpp7-bih@nic.in",
+    "GOVERNMENT POLYTECHNIC, BHOJPUR": "principalgpbhojpur@gmail.com, gpp7-bih@nic.in",
+    "GOVERNMENT POLYTECHNIC BHOJPUR": "principalgpbhojpur@gmail.com, gpp7-bih@nic.in",
+    "GOVERNMENT POLYTECHNIC BUXAR": "contact@gpbuxar.ac.in, gpbuxar2017@gmail.com",
+    "GOVERNMENT POLYTECHNIC, BUXAR": "contact@gpbuxar.ac.in, gpbuxar2017@gmail.com",
+    "GOVERNMENT POLYTECHNIC, DARBHANGA": "gpdarbhanga@rediffmail.com, gpdar-bih@gmail.com",
+    "GOVERNMENT POLYTECHNIC DARBHANGA": "gpdarbhanga@rediffmail.com, gpdar-bih@gmail.com",
+    "GOVERNMENT POLYTECHNIC, MOTIHARI": "gpmotiharibih@gmail.com",
+    "GOVERNMENT POLYTECHNIC MOTIHARI": "gpmotiharibih@gmail.com",
+    "GOVERNMENT POLYTECHNIC, GAYA": "govtpolytechnicgaya@gmail.com, brogaya_gpg@dataone.in",
+    "GOVT. POLYTECHNIC, GAYA": "govtpolytechnicgaya@gmail.com, brogaya_gpg@dataone.in",
+    "GOVERNMENT POLYTECHNIC GAYA": "govtpolytechnicgaya@gmail.com, brogaya_gpg@dataone.in",
+    "GOVERNMENT POLYTECHNIC, TEKARI, GAYA": "gptekarigaya@gmail.com, gptekari-gaya-bih@gov.in",
+    "GOVERNMENT POLYTECHNIC, TEKARI": "gptekarigaya@gmail.com, gptekari-gaya-bih@gov.in",
+    "GOVT. POLYTECHNIC TEKARI, GAYA": "gptekarigaya@gmail.com, gptekari-gaya-bih@gov.in",
+    "BRAJ KISHOR NARAYAN SINGH GOVT. POLYTECHNIC, GOPALGANJ": "bknsgpgopalganj@gmail.com",
+    "B.K.N.S. GOVERNMENT POLYTECHNIC, GOPALGANJ": "bknsgpgopalganj@gmail.com",
+    "BKNS GOVT. POLYTECHNIC, GOPALGANJ": "bknsgpgopalganj@gmail.com",
+    "GOVERNMENT POLYTECHNIC GOPALGANJ": "gpgopalganjbih@gmail.com",
+    "GOVERNMENT POLYTECHNIC, GOPALGANJ": "gpgopalganjbih@gmail.com",
+    "GOVERNMENT POLYTECHNIC JAMUI": "principal.gpjamui@gmail.com",
+    "GOVERNMENT POLYTECHNIC, JAMUI": "principal.gpjamui@gmail.com",
+    "GOVT. POLYTECHNIC, JEHANABAD": "principal@gpj.org.in, gpjehanabad@gmail.com",
+    "GOVERNMENT POLYTECHNIC, JEHANABAD": "principal@gpj.org.in, gpjehanabad@gmail.com",
+    "GOVERNMENT POLYTECHNIC JEHANABAD": "principal@gpj.org.in, gpjehanabad@gmail.com",
+    "GOVERNMENT POLYTECHNIC, KAIMUR": "gpkaimur2016@gmail.com",
+    "GOVERNMENT POLYTECHNIC KAIMUR": "gpkaimur2016@gmail.com",
+    "GOVERNMENT POLYTECHNIC KATIHAR": "principal124gpkatihar@gmail.com, gpkatihar@gmail.com",
+    "GOVERNMENT POLYTECHNIC, KATIHAR": "principal124gpkatihar@gmail.com, gpkatihar@gmail.com",
+    "GOVT. POLYTECHNIC, KAGARIA": "gpkhagaria@gmail.com",
+    "GOVERNMENT POLYTECHNIC, KHAGARIA": "gpkhagaria@gmail.com",
+    "GOVERNMENT POLYTECHNIC KHAGARIA": "gpkhagaria@gmail.com",
+    "GOVERNMENT POLYTECHNIC, KISHANGANJ": "govtpolykishanganj@gmail.com, rkumarjsr@rediffmail.com",
+    "GOVERNMENT POLYTECHNIC KISHANGANJ": "govtpolykishanganj@gmail.com, rkumarjsr@rediffmail.com",
+    "GOVERNMENT POLYTECHNIC LAKHISARAI": "gp.lakhi@gmail.com, gp.lakhil@gmail.com",
+    "GOVERNMENT POLYTECHNIC, LAKHISARAI": "gp.lakhi@gmail.com, gp.lakhil@gmail.com",
+    "GOVERMENT POLYTECHNIC MADHEPURA": "principalgpmadhepura@gmail.com, gpmadhepura@gmail.com",
+    "GOVERNMENT POLYTECHNIC, MADHEPURA": "principalgpmadhepura@gmail.com, gpmadhepura@gmail.com",
+    "GOVERNMENT POLYTECHNIC MADHEPURA": "principalgpmadhepura@gmail.com, gpmadhepura@gmail.com",
+    "GOVERNMENT POLYTECHNIC, MADHUBANI": "govpolytechnicmdb@gmail.com, govplytechnicmdb@gmail.com",
+    "GOVERNMENT POLYTECHNIC MADHUBANI": "govpolytechnicmdb@gmail.com, govplytechnicmdb@gmail.com",
+    "GOVERNMENT POLYTECHNIC, MUNGER": "gpmunger@gmail.com, polytechnic_munger@yahoo.com",
+    "GOVERNMENT POLYTECHNIC MUNGER": "gpmunger@gmail.com, polytechnic_munger@yahoo.com",
+    "GOVERNMENT POLYTECHNIC, MUZAFFARPUR": "principal.gpmuz@gmail.com",
+    "GOVERNMENT POLYTECHNIC MUZAFFARPUR": "principal.gpmuz@gmail.com",
+    "GOVERNMENT WOMENS POLYTECHNIC, MUZAFFARPUR": "principalgwp.muz@gmail.com, principal_gwp_muz@yahoo.co.in",
+    "GOVT. WOMENS POLYTECHNIC, MUZAFFARPUR": "principalgwp.muz@gmail.com, principal_gwp_muz@yahoo.co.in",
+    "GOVT. WOMENS POLYTECHNIC,MUZAFFARPUR": "principalgwp.muz@gmail.com, principal_gwp_muz@yahoo.co.in",
+    "GOVERNMENT POLYTECHNIC ASTHAWAN,NALANDA": "gp.nalanda@gmail.com",
+    "GOVERNMENT POLYTECHNIC, ASTHAWAN, NALANDA": "gp.nalanda@gmail.com",
+    "GOVERNMENT POLYTECHNIC ASTHAWAN NALANDA": "gp.nalanda@gmail.com",
+    "GOVERNMENT POLYTECHNIC, NAWADA": "principalgpnawada@gmail.com",
+    "GOVERNMENT POLYTECHNIC NAWADA": "principalgpnawada@gmail.com",
+    "GOVERNMENT POLYTECHNIC, BARH": "gpbarhpatna@gmail.com",
+    "GOVERNMENT POLYTECHNIC BARH": "gpbarhpatna@gmail.com",
+    "GOVERNMENT POLYTECHNIC, PATNA": "gpp7-bih@nic.in, gpgulzarbaghpatna7@gmail.com",
+    "GOVERNMENT POLYTECHNIC PATNA": "gpp7-bih@nic.in, gpgulzarbaghpatna7@gmail.com",
+    "GOVERNMENT POLYTECHNIC, GULZARBAGH, PATNA": "gpp7-bih@nic.in, gpgulzarbaghpatna7@gmail.com",
+    "GOVERNMENT WOMAN POLYTECHNIC,PATNA": "gwpc.patna@gmail.com",
+    "GOVERNMENT WOMEN POLYTECHNIC, PATNA": "gwpc.patna@gmail.com",
+    "GOVT. WOMENS POLYTECHNIC,PATNA": "gwpc.patna@gmail.com",
+    "NEW GOVERNMENT POLYTECHNIC, PATNA": "ngpp13-bih@nic.in, ngppat13@gmail.com",
+    "NEW GOVERNMENT POLYTECHNIC, PATLIPUTRA": "ngpp13-bih@nic.in, ngppat13@gmail.com",
+    "NEW GOVT. POLYTECHNIC, PATNA-13": "ngpp13-bih@nic.in, ngppat13@gmail.com",
+    "TOOL ROOM AND TRAINING CENTER": "trtcpatna14@gmail.com",
+    "GOVERNMENT POLYTECHNIC, PURNEA": "gppurnea@gmail.com",
+    "GOVERNMENT POLYTECHNIC PURNEA": "gppurnea@gmail.com",
+    "GOVERNMENT POLYTECHNIC, DEHRI ON SONE": "gpdehrionsone27@gmail.com",
+    "GOVERNMENT POLYTECHNIC DEHRI ON SONE": "gpdehrionsone27@gmail.com",
+    "GOVERNMENT POLYTECHNIC, SAHARSA": "gpolytechnicsaharsa@gmail.com",
+    "GOVERNMENT POLYTECHNIC SAHARSA": "gpolytechnicsaharsa@gmail.com",
+    "KAMESHWAR NARAYAN SINGH GOVERNMENT POLYTECHNIC SAMASTIPUR": "knsgpsamastipur@gmail.com, principalknspolysamastipur@gmail.com",
+    "K.N.S. GOVERNMENT POLYTECHNIC, SAMASTIPUR": "knsgpsamastipur@gmail.com, principalknspolysamastipur@gmail.com",
+    "GOVERNMENT POLYTECHNIC CHAPRA": "gpchhapra@gmail.com, gpcha-bih@nic.in",
+    "GOVERNMENT POLYTECHNIC, CHAPRA": "gpchhapra@gmail.com, gpcha-bih@nic.in",
+    "GOVERNMENT POLYTECHNIC, SHEIKHPURA": "principal.gpsheikhpura@gmail.com",
+    "GOVERNMENT POLYTECHNIC SHEIKHPURA": "principal.gpsheikhpura@gmail.com",
+    "GOVERNMENT POLYTECHNIC SHEOHAR": "principal.gpsheohar@gmail.com",
+    "GOVERNMENT POLYTECHNIC, SHEOHAR": "principal.gpsheohar@gmail.com",
+    "BADDIUZAMA KHAN POLYTECHNIC INTITUTE, SITAMARHI": "principal.bkpi@gmail.com, badduqzamakhan@rediffmail.com",
+    "GOVERNMENT POLYTECHNIC, SITAMARHI": "principal@gpsitamarhi.in, gpsitamarhi@gmail.com",
+    "GOVERNMENT POLYTECHNIC SITAMARHI": "principal@gpsitamarhi.in, gpsitamarhi@gmail.com",
+    "GOVERNMENT POLYTECHNIC, SIWAN": "polychapra@rediffmail.com",
+    "GOVERNMENT POLYTECHNIC SIWAN": "polychapra@rediffmail.com",
+    "GOVERNMENT POLYTECHNIC, RAGHOPUR, SUPAUL": "gpraghopur@gmail.com",
+    "GOVERNMENT POLYTECHNIC RAGHOPUR SUPAUL": "gpraghopur@gmail.com",
+    "GOVERNMENT POLYTECHNIC, VAISHALI": "gp.vaishali@gmail.com",
+    "GOVERNMENT POLYTECHNIC VAISHALI": "gp.vaishali@gmail.com",
+    "GOVERNMENT POLYTECHNIC, WEST CHAMPARAN": "gpwestchamparan@gmail.com, fazle.sarwar@yahoo.com",
+    "GOVERNMENT POLYTECHNIC WEST CHAMPARAN": "gpwestchamparan@gmail.com, fazle.sarwar@yahoo.com",
 }
 
 KNOWN_COLLEGE_PHONES = {
@@ -574,6 +787,7 @@ def resolve_college_website(name, email="", district="Patna", ownership="Private
             and host not in GENERIC_EMAIL_DOMAINS
             and not any(host.endswith(a) for a in AGGREGATOR_DOMAINS)
             and "gmai.com" not in host
+            and not ("biharskilldevelopmentmission" in host and not any(k in n_up for k in ("BSDM", "KYP", "KUSHAL", "DOMAIN")))
         ):
             return str(cur_web).strip().rstrip("/")
 
@@ -1506,6 +1720,7 @@ def run_scraper_pipeline(params):
 
     effective_course = custom_query if custom_query else category
     is_target_bvoc = is_bvoc_dvoc_context(category) or is_bvoc_dvoc_context(effective_course)
+    is_target_poly = (category.upper() == "POLYTECHNIC" or any(k in effective_course.upper() for k in ("POLYTECHNIC", "DIPLOMA IN ENGINEERING", "DIPLOMA ENGINEERING"))) and not any(k in effective_course.upper() for k in ("BSDM", "KYP", "DOMAIN", "SKILL"))
     results = []
     seen_names = set()
 
@@ -1535,7 +1750,10 @@ def run_scraper_pipeline(params):
                         if "ENGINEERING" in searchable or "B.TECH" in searchable:
                             matched = True
                 elif category.upper() in searchable:
-                    matched = True
+                    if category.upper() in ("POLYTECHNIC", "ENGINEERING", "B.VOC & D.VOC", "ITI", "BSDM KYP CENTERS", "DOMAIN SKILLING CENTRES"):
+                        matched = False
+                    elif item_cat.upper() not in ("ITI", "BSDM KYP CENTERS", "DOMAIN SKILLING CENTRES"):
+                        matched = True
             else:
                 # Match custom course or keyword
                 tokens = [
@@ -1549,7 +1767,12 @@ def run_scraper_pipeline(params):
                     return tok in target_text
 
                 if any(_matches_token(t, searchable) for t in tokens):
-                    if any(t in ("ENGINEERING", "B.TECH", "BTECH", "BE") for t in tokens) and not any(k in custom_query.upper() for k in ("ITI", "BSDM", "KYP", "SKILL")):
+                    if any(t in ("POLYTECHNIC", "DIPLOMA") for t in tokens) and not any(k in custom_query.upper() for k in ("BSDM", "KYP", "SKILL", "DOMAIN")):
+                        if item_cat.upper() in ("BSDM KYP CENTERS", "DOMAIN SKILLING CENTRES", "ITI"):
+                            matched = False
+                        else:
+                            matched = True
+                    elif any(t in ("ENGINEERING", "B.TECH", "BTECH", "BE") for t in tokens) and not any(k in custom_query.upper() for k in ("ITI", "BSDM", "KYP", "SKILL")):
                         if item_cat.upper() in ("ITI", "BSDM KYP CENTERS", "DOMAIN SKILLING CENTRES"):
                             matched = False
                         else:
@@ -1560,6 +1783,17 @@ def run_scraper_pipeline(params):
             # Strict isolation for B.Voc & D.Voc: Never allow ITI / NCVT / SCVT / BSDM trade centres to leak in
             if matched and is_target_bvoc:
                 if item_cat.upper() in ("ITI", "BSDM KYP CENTERS", "DOMAIN SKILLING CENTRES") or is_iti_institution(item_name, item_cat, item_courses, item_univ):
+                    matched = False
+
+            # Strict isolation for Polytechnic: Never allow BSDM KYP / Domain centers or ITIs to leak in
+            if matched and is_target_poly:
+                if (
+                    item_cat.upper() in ("BSDM KYP CENTERS", "DOMAIN SKILLING CENTRES", "ITI")
+                    or "BIHARSKILLDEVELOPMENTMISSION" in searchable
+                    or "BSDM" in item_univ.upper()
+                    or "biharskilldevelopmentmission" in str(item.get("email", "")).lower()
+                    or "biharskilldevelopmentmission" in str(item.get("website", "")).lower()
+                ):
                     matched = False
 
             if not matched:
@@ -1599,7 +1833,7 @@ def run_scraper_pipeline(params):
                     if u not in urls_to_crawl:
                         urls_to_crawl.append(u)
 
-            if "ITI" in effective_course.upper() and not is_target_bvoc:
+            if "ITI" in effective_course.upper() and not is_target_bvoc and not is_target_poly:
                 iti_candidates = [
                     "https://iti.directory/bihar-iti",
                     "https://iti.directory/bihar-iti/govt-iti",
@@ -1611,7 +1845,7 @@ def run_scraper_pipeline(params):
                     if iu not in urls_to_crawl:
                         urls_to_crawl.append(iu)
 
-            if any(k in effective_course.upper() for k in ("BSDM", "KYP", "DOMAIN", "SKILL")) and not is_target_bvoc:
+            if any(k in effective_course.upper() for k in ("BSDM", "KYP", "DOMAIN", "SKILL")) and not is_target_bvoc and not is_target_poly:
                 bsdm_candidates = [
                     "https://www.biharskilldevelopmentmission.in/#/website/find-centers",
                     "https://www.biharskilldevelopmentmission.in/#/website/courses-offered",
@@ -1644,6 +1878,13 @@ def run_scraper_pipeline(params):
                                 or is_iti_institution(info.get("name"), info.get("category"), info.get("courses"), info.get("university"))
                             ):
                                 continue
+                            if is_target_poly and (
+                                info.get("category", "").upper() in ("BSDM KYP CENTERS", "DOMAIN SKILLING CENTRES", "ITI")
+                                or "BSDM" in str(info.get("university", "")).upper()
+                                or "biharskilldevelopmentmission" in str(info.get("email", "")).lower()
+                                or "biharskilldevelopmentmission" in str(info.get("website", "")).lower()
+                            ):
+                                continue
                             norm_name = re.sub(r"[^A-Z0-9]", "", info["name"].upper())
                             dedup_key = (info.get("district", "").upper(), info.get("code", "").upper(), norm_name)
                             if norm_name and dedup_key not in seen_names:
@@ -1665,6 +1906,13 @@ def run_scraper_pipeline(params):
                 if is_target_bvoc and (
                     item.get("category", "").upper() in ("ITI", "BSDM KYP CENTERS", "DOMAIN SKILLING CENTRES")
                     or is_iti_institution(item.get("name"), item.get("category"), item.get("courses"), item.get("university"))
+                ):
+                    continue
+                if is_target_poly and (
+                    item.get("category", "").upper() in ("BSDM KYP CENTERS", "DOMAIN SKILLING CENTRES", "ITI")
+                    or "BSDM" in str(item.get("university", "")).upper()
+                    or "biharskilldevelopmentmission" in str(item.get("email", "")).lower()
+                    or "biharskilldevelopmentmission" in str(item.get("website", "")).lower()
                 ):
                     continue
                 searchable = f"{item.get('category', '')} {item.get('courses', '')} {item.get('name', '')}".upper()
@@ -1728,8 +1976,21 @@ def run_scraper_pipeline(params):
             else:
                 r["phone"] = college_ph
 
+        # Clean up any misplaced BSDM emails or websites on non-BSDM colleges
+        if not any(k in n_up for k in ("BSDM", "KYP", "KUSHAL", "DOMAIN")):
+            if "biharskilldevelopmentmission" in str(r.get("email", "")).lower():
+                r["email"] = ""
+            if "biharskilldevelopmentmission" in str(r.get("website", "")).lower():
+                r["website"] = ""
+
+        if not str(r.get("email") or "").strip():
+            for k, em in sorted(KNOWN_COLLEGE_EMAILS.items(), key=lambda x: len(x[0]), reverse=True):
+                if k in n_up:
+                    r["email"] = em
+                    break
         if not str(r.get("email") or "").strip():
             r["email"] = u_em
+
         dist_val = r.get("district") or "Patna"
         if not str(r.get("pincode") or "").strip() or len(str(r.get("pincode")).strip()) != 6:
             r["pincode"] = DISTRICT_PINCODES.get(dist_val, "800001")
@@ -1741,6 +2002,11 @@ def run_scraper_pipeline(params):
             r.get("website") or "",
             r.get("code") or "",
         )
+        if not str(r.get("website") or "").strip():
+            for k, site_url in sorted(KNOWN_COLLEGE_WEBSITES.items(), key=lambda x: len(x[0]), reverse=True):
+                if k in n_up:
+                    r["website"] = site_url
+                    break
 
     # Strict final safety filter for B.Voc & D.Voc: Ensure 0 ITI trade centers leak into final results
     if is_target_bvoc:
@@ -1749,6 +2015,18 @@ def run_scraper_pipeline(params):
             if not (
                 r.get("category", "").upper() in ("ITI", "BSDM KYP CENTERS", "DOMAIN SKILLING CENTRES")
                 or is_iti_institution(r.get("name"), r.get("category"), r.get("courses"), r.get("university"))
+            )
+        ]
+
+    # Strict final safety filter for Polytechnic: Ensure 0 BSDM skilling centers leak into final results
+    if is_target_poly:
+        results = [
+            r for r in results
+            if not (
+                r.get("category", "").upper() in ("BSDM KYP CENTERS", "DOMAIN SKILLING CENTRES", "ITI")
+                or "BSDM" in str(r.get("university", "")).upper()
+                or "biharskilldevelopmentmission" in str(r.get("email", "")).lower()
+                or "biharskilldevelopmentmission" in str(r.get("website", "")).lower()
             )
         ]
 
@@ -1849,7 +2127,18 @@ def build_excel_bytes(govt_list, priv_list, course_label="Colleges"):
                 else:
                     phone_val = college_ph
 
-            email_str = str(item.get("email") or "").strip() or u_em
+            email_str = str(item.get("email") or "").strip()
+            if not any(k in n_up for k in ("BSDM", "KYP", "KUSHAL", "DOMAIN")):
+                if "biharskilldevelopmentmission" in email_str.lower():
+                    email_str = ""
+            if not email_str:
+                for k, em in sorted(KNOWN_COLLEGE_EMAILS.items(), key=lambda x: len(x[0]), reverse=True):
+                    if k in n_up:
+                        email_str = em
+                        break
+            if not email_str:
+                email_str = u_em
+
             dist_str = item.get("district") or "Patna"
             pin_val = str(item.get("pincode") or "").strip() or DISTRICT_PINCODES.get(dist_str, "800001")
             web_str = resolve_college_website(
@@ -1860,6 +2149,11 @@ def build_excel_bytes(govt_list, priv_list, course_label="Colleges"):
                 item.get("website") or "",
                 code_str,
             )
+            if not web_str or ("biharskilldevelopmentmission" in web_str.lower() and not any(k in n_up for k in ("BSDM", "KYP", "KUSHAL", "DOMAIN"))):
+                for k, site_url in sorted(KNOWN_COLLEGE_WEBSITES.items(), key=lambda x: len(x[0]), reverse=True):
+                    if k in n_up:
+                        web_str = site_url
+                        break
             row_vals = [
                 idx,
                 code_str,
@@ -1952,7 +2246,18 @@ def build_csv_bytes(govt_list, priv_list, course_label="Colleges"):
                 else:
                     phone_val = college_ph
 
-            email_str = str(item.get("email") or "").strip() or u_em
+            email_str = str(item.get("email") or "").strip()
+            if not any(k in n_up for k in ("BSDM", "KYP", "KUSHAL", "DOMAIN")):
+                if "biharskilldevelopmentmission" in email_str.lower():
+                    email_str = ""
+            if not email_str:
+                for k, em in sorted(KNOWN_COLLEGE_EMAILS.items(), key=lambda x: len(x[0]), reverse=True):
+                    if k in n_up:
+                        email_str = em
+                        break
+            if not email_str:
+                email_str = u_em
+
             dist_str = item.get("district") or "Patna"
             pin_val = str(item.get("pincode") or "").strip() or DISTRICT_PINCODES.get(dist_str, "800001")
             web_str = resolve_college_website(
@@ -1963,6 +2268,11 @@ def build_csv_bytes(govt_list, priv_list, course_label="Colleges"):
                 item.get("website") or "",
                 code_str,
             )
+            if not web_str or ("biharskilldevelopmentmission" in web_str.lower() and not any(k in n_up for k in ("BSDM", "KYP", "KUSHAL", "DOMAIN"))):
+                for k, site_url in sorted(KNOWN_COLLEGE_WEBSITES.items(), key=lambda x: len(x[0]), reverse=True):
+                    if k in n_up:
+                        web_str = site_url
+                        break
             writer.writerow([
                 s_no,
                 code_str,
@@ -2596,6 +2906,11 @@ def self_check():
         res = run_scraper_pipeline({"category": cat, "state": "Bihar", "district": "All", "mode": "verified"})
         assert res["govt_count"] >= min_gov, f"{cat} govt count too low: {res['govt_count']}"
         assert res["priv_count"] >= min_priv, f"{cat} priv count too low: {res['priv_count']}"
+        if cat == "Polytechnic":
+            assert not any("BSDM" in str(r.get("university")).upper() for r in res["government"] + res["private"]), "BSDM record found in Polytechnic"
+            assert not any("biharskilldevelopmentmission" in str(r.get("email")).lower() for r in res["government"] + res["private"]), "BSDM email found in Polytechnic"
+            assert not any("biharskilldevelopmentmission" in str(r.get("website")).lower() for r in res["government"] + res["private"]), "BSDM website found in Polytechnic"
+            assert res["govt_count"] == 50, f"Expected exactly 50 Govt Polytechnics, got {res['govt_count']}"
         if cat == "Engineering":
             assert not any("BSDM" in str(r.get("university")).upper() for r in res["private"]), "BSDM record found in Private Engineering"
             assert not any("-220055" in str(r.get("phone")) for r in res["government"]), "Placeholder -220055 found in Govt Engineering phone"
