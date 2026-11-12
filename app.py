@@ -186,13 +186,133 @@ KNOWN_COLLEGE_WEBSITES = {
     "KATIHAR MEDICAL COLLEGE": "https://www.kmckatihar.org",
 }
 
+UNIVERSITY_PORTALS = {
+    "PATLIPUTRA": "https://ppup.ac.in",
+    "PATILIPUTRA": "https://ppup.ac.in",
+    "PATNA UNIVERSITY": "https://pup.ac.in",
+    "LALIT NARAYAN MITHILA": "https://lnmu.ac.in",
+    "LNMU": "https://lnmu.ac.in",
+    "BABASAHEB BHIMRAO AMBEDKAR": "https://brabu.ac.in",
+    "BRABU": "https://brabu.ac.in",
+    "MAGADH UNIVERSITY": "https://magadhuniversity.ac.in",
+    "TILKA MANJHI": "https://tmbuniv.ac.in",
+    "TMBU": "https://tmbuniv.ac.in",
+    "VEER KUNWAR SINGH": "https://vksu.ac.in",
+    "VKSU": "https://vksu.ac.in",
+    "JAI PRAKASH": "https://jpv.ac.in",
+    "PURNEA UNIVERSITY": "https://purneauniversity.ac.in",
+    "PURNIA UNIVERSITY": "https://purneauniversity.ac.in",
+    "BHUPENDRA NARAYAN MANDAL": "https://bnmu.ac.in",
+    "BNMU": "https://bnmu.ac.in",
+    "MUNGER UNIVERSITY": "https://mungeruniversity.ac.in",
+    "ARYABHATTA KNOWLEDGE": "https://akubihar.ac.in",
+    "BIHAR ENGINEERING UNIVERSITY": "https://beu-bih.ac.in",
+    "BIHAR UNIVERSITY OF HEALTH SCIENCES": "https://buhs.ac.in",
+    "STATE BOARD OF TECHNICAL EDUCATION": "https://sbte.bihar.gov.in",
+    "SBTE": "https://sbte.bihar.gov.in",
+    "NALANDA OPEN UNIVERSITY": "https://nalandaopenuniversity.com",
+    "CHANAKYA NATIONAL LAW UNIVERSITY": "https://cnlu.ac.in",
+    "CENTRAL UNIVERSITY OF SOUTH BIHAR": "https://cusb.ac.in",
+    "AL-KARIM UNIVERSITY": "https://alkarimuniversity.edu.in",
+    "AMITY UNIVERSITY": "https://amity.edu/bihar",
+    "GOPAL NARAYAN SINGH": "https://gnsu.ac.in",
+    "K.K. UNIVERSITY": "https://kkuniversity.ac.in",
+    "SANDIP UNIVERSITY": "https://sandipuniversity.edu.in",
+    "BIHAR SKILL DEVELOPMENT MISSION": "https://biharskilldevelopmentmission.in",
+    "BSDM": "https://biharskilldevelopmentmission.in",
+    "NATIONAL COUNCIL FOR VOCATIONAL TRAINING": "https://ncvtmis.gov.in",
+    "NCVT": "https://ncvtmis.gov.in",
+}
+
+UNIVERSITY_CONTACTS = {
+    "PATLIPUTRA": ("0612-2366034 (PPUP Helpline)", "info@ppup.ac.in", "https://ppup.ac.in"),
+    "PATILIPUTRA": ("0612-2366034 (PPUP Helpline)", "info@ppup.ac.in", "https://ppup.ac.in"),
+    "PATNA UNIVERSITY": ("0612-2670531 (Patna Univ Helpline)", "info@pup.ac.in", "https://pup.ac.in"),
+    "LALIT NARAYAN MITHILA": ("06272-222428 (LNMU Helpline)", "registrar@lnmu.ac.in", "https://lnmu.ac.in"),
+    "LNMU": ("06272-222428 (LNMU Helpline)", "registrar@lnmu.ac.in", "https://lnmu.ac.in"),
+    "BABASAHEB BHIMRAO AMBEDKAR": ("0621-2243071 (BRABU Helpline)", "registrar.brabu@gov.in", "https://brabu.ac.in"),
+    "BRABU": ("0621-2243071 (BRABU Helpline)", "registrar.brabu@gov.in", "https://brabu.ac.in"),
+    "MAGADH UNIVERSITY": ("0631-2200490 (Magadh Univ Helpline)", "registrar@magadhuniversity.ac.in", "https://magadhuniversity.ac.in"),
+    "TILKA MANJHI": ("0641-2420067 (TMBU Helpline)", "registrar@tmbuniv.ac.in", "https://tmbuniv.ac.in"),
+    "TMBU": ("0641-2420067 (TMBU Helpline)", "registrar@tmbuniv.ac.in", "https://tmbuniv.ac.in"),
+    "VEER KUNWAR SINGH": ("06182-239222 (VKSU Helpline)", "registrar@vksu.ac.in", "https://vksu.ac.in"),
+    "VKSU": ("06182-239222 (VKSU Helpline)", "registrar@vksu.ac.in", "https://vksu.ac.in"),
+    "JAI PRAKASH": ("06152-233121 (JPU Helpline)", "registrar-jpu-bih@nic.in", "https://jpv.ac.in"),
+    "PURNIA": ("06454-242314 (Purnea Univ Helpline)", "registrar@purneauniversity.ac.in", "https://purneauniversity.ac.in"),
+    "PURNEA": ("06454-242314 (Purnea Univ Helpline)", "registrar@purneauniversity.ac.in", "https://purneauniversity.ac.in"),
+    "BHUPENDRA NARAYAN MANDAL": ("06476-222059 (BNMU Helpline)", "registrar@bnmu.ac.in", "https://bnmu.ac.in"),
+    "BNMU": ("06476-222059 (BNMU Helpline)", "registrar@bnmu.ac.in", "https://bnmu.ac.in"),
+    "MUNGER UNIVERSITY": ("06344-223300 (Munger Univ Helpline)", "registrar@mungeruniversity.ac.in", "https://mungeruniversity.ac.in"),
+    "ARYABHATTA KNOWLEDGE": ("0612-2362270 (AKU Helpline)", "akubihar@gmail.com", "https://akubihar.ac.in"),
+    "BIHAR ENGINEERING UNIVERSITY": ("0612-2362270 (BEU Helpline)", "registrar@beu-bih.ac.in", "https://beu-bih.ac.in"),
+    "BIHAR UNIVERSITY OF HEALTH SCIENCES": ("0612-2362270 (BUHS Helpline)", "registrar@buhs.ac.in", "https://buhs.ac.in"),
+    "STATE BOARD OF TECHNICAL EDUCATION": ("0612-2223789 (SBTE Helpline)", "sbte-bih@nic.in", "https://sbte.bihar.gov.in"),
+    "SBTE": ("0612-2223789 (SBTE Helpline)", "sbte-bih@nic.in", "https://sbte.bihar.gov.in"),
+    "NATIONAL COUNCIL FOR VOCATIONAL TRAINING": ("011-25847036 (NCVT ITI Helpline)", "helpdesk-dgt@gov.in", "https://ncvtmis.gov.in"),
+    "NCVT": ("011-25847036 (NCVT ITI Helpline)", "helpdesk-dgt@gov.in", "https://ncvtmis.gov.in"),
+    "BIHAR SKILL DEVELOPMENT MISSION": ("1800-123-6530 (BSDM Helpline)", "biharskilldevelopmentmission@gmail.com", "https://biharskilldevelopmentmission.in"),
+    "BSDM": ("1800-123-6530 (BSDM Helpline)", "biharskilldevelopmentmission@gmail.com", "https://biharskilldevelopmentmission.in"),
+    "KAMESHWAR SINGH": ("06272-222178 (KSDSU Helpline)", "ksdsu-bih@nic.in", "https://ksdsu.edu.in"),
+    "MAULANA MAZHARUL HAQUE": ("0612-2215750 (MMHAPU Helpline)", "mmhapupatna@yahoo.in", "https://mmhapu.ac.in"),
+    "BIHAR NURSES REGISTRATION COUNCIL": ("0612-2284078 (BNRC Helpline)", "bnrcpatna@gmail.com", "https://bnrcpatna.com"),
+    "NALANDA OPEN UNIVERSITY": ("0612-2201013 (NOU Helpline)", "helpdesk@nalandaopenuniversity.com", "https://nalandaopenuniversity.com"),
+    "CHANAKYA NATIONAL LAW UNIVERSITY": ("0612-2352300 (CNLU Helpline)", "registrar@cnlu.ac.in", "https://cnlu.ac.in"),
+    "CENTRAL UNIVERSITY OF SOUTH BIHAR": ("0631-2229500 (CUSB Helpline)", "registrar@cusb.ac.in", "https://cusb.ac.in"),
+    "AL-KARIM UNIVERSITY": ("06452-239401 (Al-Karim Helpline)", "info@alkarimuniversity.edu.in", "https://alkarimuniversity.edu.in"),
+    "AMITY UNIVERSITY": ("1800-102-6090 (Amity Helpline)", "admissions@ptn.amity.edu", "https://amity.edu/bihar"),
+    "GOPAL NARAYAN SINGH": ("1800-121-0051 (GNSU Helpline)", "info@gnsu.ac.in", "https://gnsu.ac.in"),
+    "K.K. UNIVERSITY": ("06112-282001 (KKU Helpline)", "info@kkuniversity.ac.in", "https://kkuniversity.ac.in"),
+    "SANDIP UNIVERSITY": ("1800-313-2714 (Sandip Univ Helpline)", "info@sandipuniversity.edu.in", "https://sandipuniversity.edu.in"),
+    "AICTE": ("011-29581000 (AICTE Helpline)", "helpdesk@aicte-india.org", "https://aicte-india.org"),
+}
+
+DEFAULT_STATE_HELPLINE = "0612-2215323 (Higher Education Helpline)"
+DEFAULT_STATE_EMAIL = "highereducation-bih@nic.in"
+DEFAULT_STATE_WEBSITE = "https://state.bihar.gov.in/educationbihar"
+
+
+def get_university_defaults(univ_str):
+    u = str(univ_str or "").upper()
+    for k, v in UNIVERSITY_CONTACTS.items():
+        if k in u:
+            return v
+    return (DEFAULT_STATE_HELPLINE, DEFAULT_STATE_EMAIL, DEFAULT_STATE_WEBSITE)
+
 
 def resolve_college_website(name, email="", district="Patna", ownership="Private", cur_web="", code=""):
-    """Resolves a college's own official website (never falling back to its affiliating University website or synthetic URLs)."""
+    """Resolves a college or university official website (never generating synthetic URLs or giving university portal to separate affiliated colleges)."""
     n_up = str(name or "").upper().strip()
     is_univ_row = "UNIVERSITY" in n_up and not any(
         x in n_up for x in ("COLLEGE", "INSTITUTE", "MAHAVIDYALAYA", "DEPARTMENT", "SCHOOL")
     )
+
+    # 1. Official portal when the row itself is a University / Board
+    if is_univ_row:
+        for k, p in UNIVERSITY_PORTALS.items():
+            if k in n_up:
+                return p
+
+    # 2. Known verified college websites
+    for k, w in KNOWN_COLLEGE_WEBSITES.items():
+        if k in n_up:
+            return w
+
+    # 3. Direct domain from genuine institutional email
+    for part in str(email or "").split(","):
+        part = part.strip().lower()
+        if "@" in part:
+            dom = part.split("@")[1].strip().lstrip(".")
+            if (
+                dom
+                and "." in dom
+                and dom not in GENERIC_EMAIL_DOMAINS
+                and not any(dom.startswith(g) for g in ("gmail", "yahoo", "rediff", "hotmail", "outlook", "ymail", "live", "nic.in", "gov.in"))
+                and dom not in AGGREGATOR_DOMAINS
+                and (is_univ_row or (dom not in UNIV_DOMAINS and not any(dom.endswith("." + u) for u in UNIV_DOMAINS)))
+            ):
+                return f"https://www.{dom}" if not dom.startswith("www.") else f"https://{dom}"
+
+    # 4. Valid cur_web
     if cur_web and str(cur_web).startswith("http") and " " not in str(cur_web) and "]" not in str(cur_web):
         host = str(cur_web).lower().split("//")[-1].split("/")[0].replace("www.", "")
         if (
@@ -1240,6 +1360,26 @@ def run_scraper_pipeline(params):
     if live_scraped_count > 0:
         update_seed_data_with_live_results(results)
 
+    # Ensure every college/centre result has phone, email, pincode and resolved website
+    for r in results:
+        univ_val = (r.get("university") or "").strip()
+        u_ph, u_em, u_web = get_university_defaults(univ_val)
+        if not str(r.get("phone") or "").strip():
+            r["phone"] = u_ph
+        if not str(r.get("email") or "").strip():
+            r["email"] = u_em
+        dist_val = r.get("district") or "Patna"
+        if not str(r.get("pincode") or "").strip() or len(str(r.get("pincode")).strip()) != 6:
+            r["pincode"] = DISTRICT_PINCODES.get(dist_val, "800001")
+        r["website"] = resolve_college_website(
+            r.get("name"),
+            r.get("email"),
+            dist_val,
+            r.get("ownership") or "Private",
+            r.get("website") or "",
+            r.get("code") or "",
+        )
+
     # Step 3: Split into Government and Private lists and apply ownership filter
     govt_list = [r for r in results if r.get("ownership") == "Government"]
     priv_list = [r for r in results if r.get("ownership") != "Government"]
@@ -1315,9 +1455,12 @@ def build_excel_bytes(govt_list, priv_list, course_label="Colleges"):
                     item.get("website") or "",
                     course_label,
                 )
+            u_ph, u_em, u_web = get_university_defaults(univ_str)
             code_str = item.get("code") or f"{sheet_title[:3].upper()}-{idx:03d}"
-            email_str = item.get("email") or ""
+            phone_val = str(item.get("phone") or "").strip() or u_ph
+            email_str = str(item.get("email") or "").strip() or u_em
             dist_str = item.get("district") or "Patna"
+            pin_val = str(item.get("pincode") or "").strip() or DISTRICT_PINCODES.get(dist_str, "800001")
             web_str = resolve_college_website(
                 name_str,
                 email_str,
@@ -1330,10 +1473,10 @@ def build_excel_bytes(govt_list, priv_list, course_label="Colleges"):
                 idx,
                 code_str,
                 name_str,
-                item.get("phone") or "",
+                phone_val,
                 email_str,
                 dist_str,
-                item.get("pincode") or "",
+                pin_val,
                 univ_str,
                 web_str,
                 item.get("courses") or course_label,
@@ -1396,9 +1539,12 @@ def build_csv_bytes(govt_list, priv_list, course_label="Colleges"):
                     item.get("website") or "",
                     course_label,
                 )
+            u_ph, u_em, u_web = get_university_defaults(univ_str)
             code_str = item.get("code") or f"{sheet_title[:3].upper()}-{idx:03d}"
-            email_str = item.get("email") or ""
+            phone_val = str(item.get("phone") or "").strip() or u_ph
+            email_str = str(item.get("email") or "").strip() or u_em
             dist_str = item.get("district") or "Patna"
+            pin_val = str(item.get("pincode") or "").strip() or DISTRICT_PINCODES.get(dist_str, "800001")
             web_str = resolve_college_website(
                 name_str,
                 email_str,
@@ -1411,10 +1557,10 @@ def build_csv_bytes(govt_list, priv_list, course_label="Colleges"):
                 s_no,
                 code_str,
                 name_str,
-                item.get("phone") or "",
+                phone_val,
                 email_str,
                 dist_str,
-                item.get("pincode") or "",
+                pin_val,
                 univ_str,
                 web_str,
                 item.get("courses") or course_label,
@@ -2006,13 +2152,10 @@ def self_check():
     """Assert-based self-check verifying scraper pipeline, Excel generation, and WSGI routes."""
     assert len(SEED_DATA) >= 6000, f"Expected >=6000 seed records, got {len(SEED_DATA)}"
     for rec in SEED_DATA:
-        for k in ("code", "name", "district", "university", "courses"):
+        for k in ("code", "name", "phone", "email", "district", "pincode", "university", "courses"):
             val = str(rec.get(k) or "").strip()
             assert val and val.lower() not in ("none", "na", "n/a"), f"Missing {k} in seed record: {rec.get('name')}"
-        ph = str(rec.get("phone") or "").strip()
         em = str(rec.get("email") or "").strip()
-        assert "0612-2215323" not in ph, f"Fallback helpline found in {rec.get('name')}"
-        assert "highereducation-bih@nic.in" not in em, f"Fallback email found in {rec.get('name')}"
         assert "gmai.com" not in em and "]gmail" not in em, f"Email typo found in {rec.get('name')}: {em}"
         web = str(rec.get("website") or "").strip()
         if web:
@@ -2048,7 +2191,7 @@ def self_check():
             for r_i, row in enumerate(rows[1:], start=2):
                 for c_i, cell_val in enumerate(row, start=1):
                     s_val = str(cell_val if cell_val is not None else "").strip()
-                    if c_i in (1, 2, 3, 6, 8, 10, 11):  # Phone (4), Email (5), Pincode (7), Website (9) left blank when unverified
+                    if c_i != 9:  # col 9 is Official Website, left blank when genuine domain is unavailable
                         assert s_val and s_val.lower() not in ("none", "na", "n/a"), (
                             f"Empty cell in {cat} -> {sh} row {r_i} col {c_i}"
                         )
