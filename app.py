@@ -186,6 +186,76 @@ KNOWN_COLLEGE_WEBSITES = {
     "KATIHAR MEDICAL COLLEGE": "https://www.kmckatihar.org",
 }
 
+KNOWN_COLLEGE_PHONES = {
+    "PATNA WOMEN'S COLLEGE": "0612-2531186, 0612-2520220",
+    "A.N. COLLEGE": "0612-2540482",
+    "ANUGRAH NARAYAN COLLEGE": "0612-2540482",
+    "PATNA COLLEGE": "0612-2670105",
+    "PATNA SCIENCE COLLEGE": "0612-2670138",
+    "PATNA LAW COLLEGE": "0612-2670510",
+    "PATNA TRAINING COLLEGE": "0612-2670352",
+    "MAGADH MAHILA COLLEGE": "0612-2219454",
+    "B.N. COLLEGE": "0612-2677619",
+    "BIHAR NATIONAL COLLEGE": "0612-2677619",
+    "COLLEGE OF COMMERCE, ARTS & SCIENCE": "0612-2350136",
+    "J.D. WOMEN'S COLLEGE": "0612-2540505",
+    "T.P.S. COLLEGE": "0612-2354392",
+    "B.D. COLLEGE": "0612-2351722",
+    "R.P.M. COLLEGE": "0612-2641040",
+    "NALANDA COLLEGE": "06112-235265",
+    "KISAN COLLEGE": "06112-235284",
+    "C.M. SCIENCE COLLEGE": "06272-222051",
+    "C.M. COLLEGE": "06272-222320",
+    "M.L.S.M. COLLEGE": "06272-222416",
+    "R.K. COLLEGE": "06276-222264",
+    "G.D. COLLEGE": "06243-243187",
+    "SAMASTIPUR COLLEGE": "06274-222045",
+    "L.S. COLLEGE": "0621-2242171",
+    "LANGAT SINGH COLLEGE": "0621-2242171",
+    "R.D.S. COLLEGE": "0621-2272437",
+    "M.D.D.M. COLLEGE": "0621-2242508",
+    "R.N. COLLEGE": "06224-272242",
+    "M.S. COLLEGE": "06252-232742",
+    "S.N.S. COLLEGE": "06252-232145",
+    "M.S.S.G. COLLEGE": "06258-222120",
+    "M.J.K. COLLEGE": "06254-242540",
+    "S.R.K.G. COLLEGE": "06226-250230",
+    "S.M. COLLEGE": "0641-2400827",
+    "T.N.B. COLLEGE": "0641-2500478",
+    "MARWARI COLLEGE, BHAGALPUR": "0641-2401340",
+    "G.B. COLLEGE": "06421-222130",
+    "GAYA COLLEGE": "0631-2220372",
+    "S. SINHA COLLEGE": "06186-223144",
+    "K.L.S. COLLEGE": "06324-222140",
+    "S.S. COLLEGE, JEHANABAD": "06114-223450",
+    "R.D. & D.J. COLLEGE": "06344-222442",
+    "H.D. JAIN COLLEGE": "06182-239140",
+    "MAHARAJA COLLEGE": "06182-239121",
+    "S.P. JAIN COLLEGE": "06184-222150",
+    "RAJENDRA COLLEGE": "06152-232145",
+    "D.A.V. P.G. COLLEGE": "06154-222340",
+    "PURNEA COLLEGE": "06454-242318",
+    "T.P. COLLEGE": "06476-222045",
+    "DARBHANGA MEDICAL COLLEGE": "06272-252024",
+    "NALANDA MEDICAL COLLEGE": "0612-2631159",
+    "PATNA MEDICAL COLLEGE": "0612-2300080",
+    "PATNA DENTAL COLLEGE": "0612-2300340",
+    "SRI KRISHNA MEDICAL COLLEGE": "0621-2260177",
+    "JAWAHARLAL NEHRU MEDICAL COLLEGE": "0641-2401078",
+    "A.N. MAGADH MEDICAL COLLEGE": "0631-2410339",
+    "GOVERNMENT MEDICAL COLLEGE, BETTIAH": "06254-240003",
+    "VARDHMAN INSTITUTE OF MEDICAL SCIENCES": "06112-262793",
+    "JANNANAYAK KARPOORI THAKUR MEDICAL COLLEGE": "06476-222040",
+    "KATIHAR MEDICAL COLLEGE": "06452-239202",
+    "CHANAKYA COLLEGE OF HIGHER STUDIES": "7070990871, 7070890872",
+    "PRABHU KAILASH INSTITUTE OF MANAGEMENT": "7004840742",
+    "MOTI BABU INSTITUTE OF TECHNOLOGY": "7763805777, 9771498240",
+    "RUNGTA INSTITUTE OF TECHNOLOGY AND MANAGEMENT": "8539984499, 9123283050",
+    "GEMS POLYTECHNIC COLLEGE": "7366889683, 7366889684",
+    "MILLIA POLYTECHNIC": "9431204045, 8544185936",
+    "K.K. POLYTECHNIC": "9431821000",
+}
+
 UNIVERSITY_PORTALS = {
     "PATLIPUTRA": "https://ppup.ac.in",
     "PATILIPUTRA": "https://ppup.ac.in",
@@ -1362,10 +1432,30 @@ def run_scraper_pipeline(params):
 
     # Ensure every college/centre result has phone, email, pincode and resolved website
     for r in results:
+        name_str = str(r.get("name") or "").strip()
+        n_up = name_str.upper()
+        is_univ_row = "UNIVERSITY" in n_up and not any(
+            x in n_up for x in ("COLLEGE", "INSTITUTE", "MAHAVIDYALAYA", "DEPARTMENT", "SCHOOL")
+        )
         univ_val = (r.get("university") or "").strip()
         u_ph, u_em, u_web = get_university_defaults(univ_val)
-        if not str(r.get("phone") or "").strip():
-            r["phone"] = u_ph
+
+        college_ph = str(r.get("phone") or "").strip()
+        if not college_ph:
+            for k, p in KNOWN_COLLEGE_PHONES.items():
+                if k in n_up:
+                    college_ph = p
+                    break
+
+        # For colleges: give college phone only (never feed university phone to colleges)
+        if is_univ_row:
+            r["phone"] = college_ph or u_ph
+        else:
+            if any(k in college_ph for k in ["Helpline", "PPUP", "LNMU", "BRABU", "TMBU", "VKSU", "JPU", "BNMU", "AKU", "BEU", "BUHS", "SBTE", "NCVT", "0612-2215323"]):
+                r["phone"] = ""
+            else:
+                r["phone"] = college_ph
+
         if not str(r.get("email") or "").strip():
             r["email"] = u_em
         dist_val = r.get("district") or "Patna"
@@ -1447,6 +1537,10 @@ def build_excel_bytes(govt_list, priv_list, course_label="Colleges"):
 
         for idx, item in enumerate(rows_data, start=1):
             name_str = item.get("name") or ""
+            n_up = name_str.upper()
+            is_univ_row = "UNIVERSITY" in n_up and not any(
+                x in n_up for x in ("COLLEGE", "INSTITUTE", "MAHAVIDYALAYA", "DEPARTMENT", "SCHOOL")
+            )
             univ_str = (item.get("university") or "").strip()
             if not univ_str or univ_str.lower() in ("none", "na", "n/a"):
                 univ_str = infer_university_from_context(
@@ -1457,7 +1551,22 @@ def build_excel_bytes(govt_list, priv_list, course_label="Colleges"):
                 )
             u_ph, u_em, u_web = get_university_defaults(univ_str)
             code_str = item.get("code") or f"{sheet_title[:3].upper()}-{idx:03d}"
-            phone_val = str(item.get("phone") or "").strip() or u_ph
+
+            # Direct college phone only (never feed university helpline to colleges)
+            college_ph = str(item.get("phone") or "").strip()
+            if not college_ph:
+                for k, p in KNOWN_COLLEGE_PHONES.items():
+                    if k in n_up:
+                        college_ph = p
+                        break
+            if is_univ_row:
+                phone_val = college_ph or u_ph
+            else:
+                if any(k in college_ph for k in ["Helpline", "PPUP", "LNMU", "BRABU", "TMBU", "VKSU", "JPU", "BNMU", "AKU", "BEU", "BUHS", "SBTE", "NCVT", "0612-2215323"]):
+                    phone_val = ""
+                else:
+                    phone_val = college_ph
+
             email_str = str(item.get("email") or "").strip() or u_em
             dist_str = item.get("district") or "Patna"
             pin_val = str(item.get("pincode") or "").strip() or DISTRICT_PINCODES.get(dist_str, "800001")
@@ -1531,6 +1640,10 @@ def build_csv_bytes(govt_list, priv_list, course_label="Colleges"):
     for sheet_title, rows_data in [("Government", govt_list), ("Private", priv_list)]:
         for idx, item in enumerate(rows_data, start=1):
             name_str = item.get("name") or ""
+            n_up = name_str.upper()
+            is_univ_row = "UNIVERSITY" in n_up and not any(
+                x in n_up for x in ("COLLEGE", "INSTITUTE", "MAHAVIDYALAYA", "DEPARTMENT", "SCHOOL")
+            )
             univ_str = (item.get("university") or "").strip()
             if not univ_str or univ_str.lower() in ("none", "na", "n/a"):
                 univ_str = infer_university_from_context(
@@ -1541,7 +1654,22 @@ def build_csv_bytes(govt_list, priv_list, course_label="Colleges"):
                 )
             u_ph, u_em, u_web = get_university_defaults(univ_str)
             code_str = item.get("code") or f"{sheet_title[:3].upper()}-{idx:03d}"
-            phone_val = str(item.get("phone") or "").strip() or u_ph
+
+            # Direct college phone only (never feed university helpline to colleges)
+            college_ph = str(item.get("phone") or "").strip()
+            if not college_ph:
+                for k, p in KNOWN_COLLEGE_PHONES.items():
+                    if k in n_up:
+                        college_ph = p
+                        break
+            if is_univ_row:
+                phone_val = college_ph or u_ph
+            else:
+                if any(k in college_ph for k in ["Helpline", "PPUP", "LNMU", "BRABU", "TMBU", "VKSU", "JPU", "BNMU", "AKU", "BEU", "BUHS", "SBTE", "NCVT", "0612-2215323"]):
+                    phone_val = ""
+                else:
+                    phone_val = college_ph
+
             email_str = str(item.get("email") or "").strip() or u_em
             dist_str = item.get("district") or "Patna"
             pin_val = str(item.get("pincode") or "").strip() or DISTRICT_PINCODES.get(dist_str, "800001")
@@ -2152,19 +2280,22 @@ def self_check():
     """Assert-based self-check verifying scraper pipeline, Excel generation, and WSGI routes."""
     assert len(SEED_DATA) >= 6000, f"Expected >=6000 seed records, got {len(SEED_DATA)}"
     for rec in SEED_DATA:
-        for k in ("code", "name", "phone", "email", "district", "pincode", "university", "courses"):
+        for k in ("code", "name", "email", "district", "pincode", "university", "courses"):
             val = str(rec.get(k) or "").strip()
             assert val and val.lower() not in ("none", "na", "n/a"), f"Missing {k} in seed record: {rec.get('name')}"
         em = str(rec.get("email") or "").strip()
         assert "gmai.com" not in em and "]gmail" not in em, f"Email typo found in {rec.get('name')}: {em}"
+        n_up = rec["name"].upper()
+        is_univ_row = "UNIVERSITY" in n_up and not any(
+            x in n_up for x in ("COLLEGE", "INSTITUTE", "MAHAVIDYALAYA", "DEPARTMENT", "SCHOOL")
+        )
+        ph = str(rec.get("phone") or "").strip()
+        if not is_univ_row and ph:
+            assert not any(k in ph for k in ["Helpline", "PPUP", "LNMU", "BRABU", "TMBU", "VKSU", "JPU", "BNMU", "AKU", "BEU", "BUHS", "SBTE", "NCVT", "0612-2215323"]), f"College {rec['name']} still has university helpline: {ph}"
         web = str(rec.get("website") or "").strip()
         if web:
             assert web.startswith("http") and " " not in web and "]" not in web, f"Invalid website format: {web} for {rec.get('name')}"
             host = web.lower().split("//")[-1].split("/")[0].replace("www.", "")
-            n_up = rec["name"].upper()
-            is_univ_row = "UNIVERSITY" in n_up and not any(
-                x in n_up for x in ("COLLEGE", "INSTITUTE", "MAHAVIDYALAYA", "DEPARTMENT", "SCHOOL")
-            )
             if not is_univ_row:
                 assert host not in UNIV_DOMAINS, f"College {rec['name']} still has university website: {rec['website']}"
 
@@ -2191,7 +2322,7 @@ def self_check():
             for r_i, row in enumerate(rows[1:], start=2):
                 for c_i, cell_val in enumerate(row, start=1):
                     s_val = str(cell_val if cell_val is not None else "").strip()
-                    if c_i != 9:  # col 9 is Official Website, left blank when genuine domain is unavailable
+                    if c_i not in (4, 9):  # col 4 is Phone, col 9 is Website, left blank when unverified
                         assert s_val and s_val.lower() not in ("none", "na", "n/a"), (
                             f"Empty cell in {cat} -> {sh} row {r_i} col {c_i}"
                         )
