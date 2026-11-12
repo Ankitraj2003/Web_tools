@@ -77,6 +77,8 @@ BLOCKED_SEARCH_DOMAINS = {
     "pmindia.gov.in", "punjab.gov.in", "delhi.gov.in", "microsoft.com", "apple.com",
     "crazygames.com", "crazygames.gg", "poki.com", "starsunfolded.com", "imdb.com",
     "bookmyshow.com", "news18.com", "filmibeat.com", "thinkingbridge.in", "satyamcareers.in",
+    "practo.com", "mdcomputers.in", "trawell.in", "justdial.com", "indiamart.com",
+    "quora.com", "reddit.com", "tripadvisor.com", "mentoria.com",
 }
 
 COURSE_SYNONYMS = {
@@ -2872,11 +2874,12 @@ def self_check():
     """Assert-based self-check verifying scraper pipeline, Excel generation, and WSGI routes."""
     assert len(SEED_DATA) >= 6000, f"Expected >=6000 seed records, got {len(SEED_DATA)}"
     for rec in SEED_DATA:
-        for k in ("code", "name", "email", "district", "pincode", "university", "courses"):
+        for k in ("code", "name", "district", "pincode", "university", "courses"):
             val = str(rec.get(k) or "").strip()
             assert val and val.lower() not in ("none", "na", "n/a"), f"Missing {k} in seed record: {rec.get('name')}"
         em = str(rec.get("email") or "").strip()
-        assert "gmai.com" not in em and "]gmail" not in em, f"Email typo found in {rec.get('name')}: {em}"
+        if em:
+            assert "gmai.com" not in em and "]gmail" not in em, f"Email typo found in {rec.get('name')}: {em}"
         n_up = rec["name"].upper()
         is_univ_row = "UNIVERSITY" in n_up and not any(
             x in n_up for x in ("COLLEGE", "INSTITUTE", "MAHAVIDYALAYA", "DEPARTMENT", "SCHOOL")
@@ -2893,7 +2896,7 @@ def self_check():
 
     for cat, min_gov, min_priv in [
         ("Polytechnic", 50, 89),
-        ("ITI", 118, 1150),
+        ("ITI", 149, 1150),
         ("BSDM KYP Centers", 600, 1100),
         ("Domain Skilling Centres", 200, 1900),
         ("B.Voc & D.Voc", 29, 17),
@@ -2911,6 +2914,11 @@ def self_check():
             assert not any("biharskilldevelopmentmission" in str(r.get("email")).lower() for r in res["government"] + res["private"]), "BSDM email found in Polytechnic"
             assert not any("biharskilldevelopmentmission" in str(r.get("website")).lower() for r in res["government"] + res["private"]), "BSDM website found in Polytechnic"
             assert res["govt_count"] == 50, f"Expected exactly 50 Govt Polytechnics, got {res['govt_count']}"
+        if cat == "ITI":
+            assert res["govt_count"] == 149, f"Expected exactly 149 Govt ITIs, got {res['govt_count']}"
+            assert not any("BSDM" in str(r.get("university")).upper() for r in res["government"] + res["private"]), "BSDM record found in ITI"
+            assert not any("biharskilldevelopmentmission" in str(r.get("email")).lower() for r in res["government"] + res["private"]), "BSDM email found in ITI"
+            assert not any("highereducation-bih@nic.in" in str(r.get("email")).lower() for r in res["government"] + res["private"]), "Placeholder email found in ITI"
         if cat == "Engineering":
             assert not any("BSDM" in str(r.get("university")).upper() for r in res["private"]), "BSDM record found in Private Engineering"
             assert not any("-220055" in str(r.get("phone")) for r in res["government"]), "Placeholder -220055 found in Govt Engineering phone"
@@ -2928,7 +2936,7 @@ def self_check():
             for r_i, row in enumerate(rows[1:], start=2):
                 for c_i, cell_val in enumerate(row, start=1):
                     s_val = str(cell_val if cell_val is not None else "").strip()
-                    if c_i not in (4, 9):  # col 4 is Phone, col 9 is Website, left blank when unverified
+                    if c_i not in (4, 5, 9):  # col 4 is Phone, col 5 is Email, col 9 is Website, left blank when unverified
                         assert s_val and s_val.lower() not in ("none", "na", "n/a"), (
                             f"Empty cell in {cat} -> {sh} row {r_i} col {c_i}"
                         )
