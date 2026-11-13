@@ -783,8 +783,8 @@ UNIVERSITY_CONTACTS = {
     "SBTE": ("0612-2223789 (SBTE Helpline)", "sbte-bih@nic.in", "https://sbte.bihar.gov.in"),
     "NATIONAL COUNCIL FOR VOCATIONAL TRAINING": ("011-25847036 (NCVT ITI Helpline)", "helpdesk-dgt@gov.in", "https://ncvtmis.gov.in"),
     "NCVT": ("011-25847036 (NCVT ITI Helpline)", "helpdesk-dgt@gov.in", "https://ncvtmis.gov.in"),
-    "BIHAR SKILL DEVELOPMENT MISSION": ("1800-123-6530 (BSDM Helpline)", "biharskilldevelopmentmission@gmail.com", "https://biharskilldevelopmentmission.in"),
-    "BSDM": ("1800-123-6530 (BSDM Helpline)", "biharskilldevelopmentmission@gmail.com", "https://biharskilldevelopmentmission.in"),
+    "BIHAR SKILL DEVELOPMENT MISSION": ("1800-123-6530 (BSDM Helpline)", "", "https://biharskilldevelopmentmission.in"),
+    "BSDM": ("1800-123-6530 (BSDM Helpline)", "", "https://biharskilldevelopmentmission.in"),
     "KAMESHWAR SINGH": ("06272-222178 (KSDSU Helpline)", "ksdsu-bih@nic.in", "https://ksdsu.edu.in"),
     "MAULANA MAZHARUL HAQUE": ("0612-2215750 (MMHAPU Helpline)", "mmhapupatna@yahoo.in", "https://mmhapu.ac.in"),
     "BIHAR NURSES REGISTRATION COUNCIL": ("0612-2284078 (BNRC Helpline)", "bnrcpatna@gmail.com", "https://bnrcpatna.com"),
@@ -2146,7 +2146,7 @@ def run_scraper_pipeline(params):
                     r["email"] = em
                     break
         if not str(r.get("email") or "").strip():
-            if not is_target_iti and r.get("category") != "ITI":
+            if not is_target_iti and r.get("category") != "ITI" and "biharskilldevelopmentmission" not in str(u_em).lower():
                 r["email"] = u_em
 
         dist_val = r.get("district") or "Patna"
@@ -2297,9 +2297,8 @@ def build_excel_bytes(govt_list, priv_list, course_label="Colleges"):
                     phone_val = college_ph
 
             email_str = str(item.get("email") or "").strip()
-            if not any(k in n_up for k in ("BSDM", "KYP", "KUSHAL", "DOMAIN")) or course_label == "ITI" or item.get("category") == "ITI":
-                if "biharskilldevelopmentmission" in email_str.lower():
-                    email_str = ""
+            if "biharskilldevelopmentmission" in email_str.lower() and not any(k in n_up for k in ("HEADQUARTER", "MISSION HEAD OFFICE", "HQ")):
+                email_str = ""
             if course_label == "ITI" or item.get("category") == "ITI":
                 if "helpdesk-dgt" in email_str.lower():
                     email_str = ""
@@ -2308,7 +2307,7 @@ def build_excel_bytes(govt_list, priv_list, course_label="Colleges"):
                     if k in n_up:
                         email_str = em
                         break
-            if not email_str and is_univ_row and course_label != "ITI" and item.get("category") != "ITI":
+            if not email_str and is_univ_row and course_label != "ITI" and item.get("category") != "ITI" and "biharskilldevelopmentmission" not in str(u_em).lower():
                 email_str = u_em
 
             dist_str = item.get("district") or "Patna"
@@ -2419,9 +2418,8 @@ def build_csv_bytes(govt_list, priv_list, course_label="Colleges"):
                     phone_val = college_ph
 
             email_str = str(item.get("email") or "").strip()
-            if not any(k in n_up for k in ("BSDM", "KYP", "KUSHAL", "DOMAIN")) or course_label == "ITI" or item.get("category") == "ITI":
-                if "biharskilldevelopmentmission" in email_str.lower():
-                    email_str = ""
+            if "biharskilldevelopmentmission" in email_str.lower() and not any(k in n_up for k in ("HEADQUARTER", "MISSION HEAD OFFICE", "HQ")):
+                email_str = ""
             if course_label == "ITI" or item.get("category") == "ITI":
                 if "helpdesk-dgt" in email_str.lower():
                     email_str = ""
@@ -2430,7 +2428,7 @@ def build_csv_bytes(govt_list, priv_list, course_label="Colleges"):
                     if k in n_up:
                         email_str = em
                         break
-            if not email_str and is_univ_row and course_label != "ITI" and item.get("category") != "ITI":
+            if not email_str and is_univ_row and course_label != "ITI" and item.get("category") != "ITI" and "biharskilldevelopmentmission" not in str(u_em).lower():
                 email_str = u_em
 
             dist_str = item.get("district") or "Patna"
@@ -3119,6 +3117,9 @@ def self_check():
             assert any("Dental College" in r.get("name") and "Rahui" in r.get("name") for r in res["government"]), "GDCH Rahui missing from Govt Medical"
             assert not any("BSDM" in str(r.get("university")).upper() for r in res["government"] + res["private"]), "BSDM record found in Medical"
             assert not any("biharskilldevelopmentmission" in str(r.get("email")).lower() for r in res["government"] + res["private"]), "BSDM email found in Medical"
+        if cat in ("BSDM KYP Centers", "Domain Skilling Centres"):
+            assert not any("biharskilldevelopmentmission@gmail.com" in str(r.get("email")).lower() for r in res["government"] + res["private"]), f"BSDM generic email found in {cat}"
+            assert any(r.get("email") for r in res["government"] + res["private"]), f"Expected verified center emails in {cat}"
         xlsx = build_excel_bytes(res["government"], res["private"], cat)
         wb = openpyxl.load_workbook(io.BytesIO(xlsx), read_only=True)
         assert wb.sheetnames == ["Government", "Private"]
